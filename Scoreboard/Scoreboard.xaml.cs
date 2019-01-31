@@ -55,6 +55,8 @@ namespace Scoreboard
 			homeTeam.goaliePulled = false;
 			awayTeam.goaliePulled = false;
 
+			setPenaltyInformation();
+
 		}
 
 		public void printInfo() {
@@ -221,6 +223,22 @@ namespace Scoreboard
 			setPenaltyInformation();
 		}
 
+		private void HomePenMinutes1_TextChanged(object sender, TextChangedEventArgs e) {
+
+		}
+
+		private void HomePenSeconds1_TextChanged(object sender, TextChangedEventArgs e) {
+
+		}
+
+		private void HomePenMinutes2_TextChanged(object sender, TextChangedEventArgs e) {
+
+		}
+
+		private void HomePenSeconds2_TextChanged(object sender, TextChangedEventArgs e) {
+
+		}
+
 		//=================================================
 		// Away Team Methods
 		//=================================================
@@ -267,6 +285,26 @@ namespace Scoreboard
 			awayTeam.clearPen2();
 			setPenaltyInformation();
 			awayTeam.printInfo();
+		}
+
+		private void AwayPenMinutes1_TextChanged(object sender, TextChangedEventArgs e) {
+
+		}
+
+		private void AwayPenSeconds1_TextChanged(object sender, TextChangedEventArgs e) {
+
+		}
+
+		private void AwayPenMinutes2_TextChanged(object sender, TextChangedEventArgs e) {
+
+		}
+
+		private void AwayPenSeconds2_TextChanged(object sender, TextChangedEventArgs e) {
+
+		}
+
+		private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+			Keyboard.ClearFocus();
 		}
 	}
 }
