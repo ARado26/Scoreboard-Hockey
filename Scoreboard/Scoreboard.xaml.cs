@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 
 namespace Scoreboard
 {
+
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -23,9 +25,12 @@ namespace Scoreboard
 		public HockeyTeam homeTeam { get; set; }
 		public HockeyTeam awayTeam { get; set; }
 		public GameInfo gameInfo { get; set; }
+		public GameTimer timer { get; set; }
+		public System.Timers.Timer passiveTimer { get; set; }
 
 		private enum CLOCK_STATES{ STOPPED, RUNNING }
 		private CLOCK_STATES clockState;
+		private const int REFRESH_INTERVAL = 100;
 
 
         public MainWindow()
@@ -39,6 +44,12 @@ namespace Scoreboard
 			gameInfo = new GameInfo();
 			homeTeam = new HockeyTeam("HOME");
 			awayTeam = new HockeyTeam("AWAY");
+			timer = new GameTimer(REFRESH_INTERVAL);
+			timer.TimeExpired += HandleTimeExpiration;
+			passiveTimer = new System.Timers.Timer(REFRESH_INTERVAL);
+			
+
+			timer.setTimerFields(gameInfo, homeTeam, awayTeam);
 
 			HomeNameTextBox.Text = homeTeam.name;
 			HomeScore.Text = homeTeam.score.ToString();
@@ -76,26 +87,59 @@ namespace Scoreboard
 
 		private void ClockToggleButton_Click(object sender, RoutedEventArgs e)
         {
-			if ((String)ClockToggleButton.Content == "Stop") {
-				ClockToggleButton.Content = "Start";
-			}
-			else {
-				ClockToggleButton.Content = "Stop";
-			}
 			
-			if ((String)ClockToggleButton.Content == "Stop"){
+			
+			if (clockState == CLOCK_STATES.STOPPED) {
+				timer.setTimerFields(gameInfo, homeTeam, awayTeam);
+				timer.startClock();
 				clockState = CLOCK_STATES.RUNNING;
 			}
 			else {
+				timer.stopClock();
+				extractTimerFields();
 				clockState = CLOCK_STATES.STOPPED;
 			}
 
-			toggleClockElements();
+			toggleClockButtonText();
+			toggleClockTextBoxElements();
 
 			debug.Text = "Toggle Clock Mode: " + clockState;
         }
 
-		private void toggleClockElements() {
+        private void ClockSetButton_Click(object sender, RoutedEventArgs e)
+        {
+			string minutesString = GameClockMinutes.Text;
+			string secondsString = GameClockSeconds.Text;
+			gameInfo.setGameTime(minutesString, secondsString);
+			GameClockMinutes.Text = gameInfo.minutes.ToString();
+			string s = gameInfo.seconds.ToString();
+			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
+            debug.Text = "Setting Clock: " + gameInfo.minutes + ':' + (s.Length > 1 ? s : '0' + s);
+
+        }
+
+        private void GamePeriodPicker_SelectionChanged(object sender, SelectionChangedEventArgs e){
+            GamePeriod.Text = ((ComboBoxItem) GamePeriodPicker.SelectedItem).Content.ToString();
+        }
+
+		private void GamePeriodSetter_Click(object sender, RoutedEventArgs e) {
+			debug.Text = "Period Set: " + GamePeriod.Text;
+		}
+
+		private void ResetAllButton_Click(object sender, RoutedEventArgs e) {
+			debug.Text = "Reset All Fields";
+			init();
+		}
+
+		private void HandleTimeExpiration(object sender, EventArgs e) {
+			clockState = CLOCK_STATES.STOPPED;
+			extractTimerFields();
+			//toggleClockButtonText();
+			//toggleClockTextBoxElements();
+			Console.WriteLine("Time Expired: Handled");
+		}
+
+		private void toggleClockTextBoxElements() {
 			GameClockMinutes.IsEnabled = !GameClockMinutes.IsEnabled;
 			GameClockSeconds.IsEnabled = !GameClockSeconds.IsEnabled;
 
@@ -112,19 +156,19 @@ namespace Scoreboard
 
 		private void setPenaltyInformation() {
 
-			if (homeTeam.penalty1 != 0) {
-				HomePenMinutes1.Text = homeTeam.penalty1Mins.ToString();
-				string s = homeTeam.penalty1Sec.ToString();
-				HomePenSeconds1.Text = (s.Length > 1 ? s :'0'+s);
+			if (homeTeam.penalty1.TotalMilliseconds != 0) {
+				HomePenMinutes1.Text = homeTeam.penalty1.Minutes.ToString();
+				string s = homeTeam.penalty1.Seconds.ToString();
+				HomePenSeconds1.Text = (s.Length > 1 ? s : '0' + s);
 			}
 			else {
 				HomePenMinutes1.Text = "";
 				HomePenSeconds1.Text = "";
 			}
 
-			if (homeTeam.penalty2 != 0) {
-				HomePenMinutes2.Text = homeTeam.penalty2Mins.ToString();
-				string s = homeTeam.penalty2Sec.ToString();
+			if (homeTeam.penalty2.TotalMilliseconds != 0) {
+				HomePenMinutes2.Text = homeTeam.penalty2.Minutes.ToString();
+				string s = homeTeam.penalty2.Seconds.ToString();
 				HomePenSeconds2.Text = (s.Length > 1 ? s : '0' + s);
 			}
 			else {
@@ -132,9 +176,9 @@ namespace Scoreboard
 				HomePenSeconds2.Text = "";
 			}
 
-			if (awayTeam.penalty1 != 0) {
-				AwayPenMinutes1.Text = awayTeam.penalty1Mins.ToString();
-				string s = awayTeam.penalty1Sec.ToString();
+			if (awayTeam.penalty1.TotalMilliseconds != 0) {
+				AwayPenMinutes1.Text = awayTeam.penalty1.Minutes.ToString();
+				string s = awayTeam.penalty1.Seconds.ToString();
 				AwayPenSeconds1.Text = (s.Length > 1 ? s : '0' + s);
 			}
 			else {
@@ -142,9 +186,9 @@ namespace Scoreboard
 				AwayPenSeconds1.Text = "";
 			}
 
-			if (awayTeam.penalty2 != 0) {
-				AwayPenMinutes2.Text = awayTeam.penalty2Mins.ToString();
-				string s = awayTeam.penalty2Sec.ToString();
+			if (awayTeam.penalty2.TotalMilliseconds != 0) {
+				AwayPenMinutes2.Text = awayTeam.penalty2.Minutes.ToString();
+				string s = awayTeam.penalty2.Seconds.ToString();
 				AwayPenSeconds2.Text = (s.Length > 1 ? s : '0' + s);
 			}
 			else {
@@ -156,30 +200,24 @@ namespace Scoreboard
 			AwayPenaltiesQueued.Content = awayTeam.getAmtOfQueuedPenalties().ToString();
 		}
 
-        private void ClockSetButton_Click(object sender, RoutedEventArgs e)
-        {
-			string minutesString = GameClockMinutes.Text;
-			string secondsString = GameClockSeconds.Text;
-			gameInfo.setGameTime(minutesString, secondsString);
-			GameClockMinutes.Text = gameInfo.minutes.ToString();
-			GameClockSeconds.Text = gameInfo.seconds.ToString();
-            debug.Text = "Setting Clock: " + gameInfo.minutes + ':' + gameInfo.seconds;
-
-        }
-
-        private void GamePeriodPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            GamePeriod.Text = ((ComboBoxItem) GamePeriodPicker.SelectedItem).Content.ToString();
-        }
-
-		private void GamePeriodSetter_Click(object sender, RoutedEventArgs e) {
-			debug.Text = "Period Set: " + GamePeriod.Text;
+		private void toggleClockButtonText() {
+			if (clockState == CLOCK_STATES.STOPPED) {
+				ClockToggleButton.Content = "Start";
+			}
+			else {
+				ClockToggleButton.Content = "Stop";
+			}
 		}
 
-		private void ResetAllButton_Click(object sender, RoutedEventArgs e) {
-			debug.Text = "Reset All Fields";
-			init();
+		private void extractTimerFields() {
+			gameInfo.gameTime = timer.gameClock;
+			homeTeam.penalty1 = timer.homePen1;
+			homeTeam.penalty2 = timer.homePen2;
+			awayTeam.penalty1 = timer.awayPen1;
+			awayTeam.penalty2 = timer.awayPen2;
 		}
+
+
 
 		//=================================================
 		// Home Team Methods
@@ -217,6 +255,16 @@ namespace Scoreboard
 			setPenaltyInformation();
 		}
 
+		private void HomePen1SetButton_Click(object sender, RoutedEventArgs e) {
+			homeTeam.setPen1(HomePenMinutes1.Text, HomePenSeconds1.Text);
+			setPenaltyInformation();
+		}
+
+		private void HomePen2SetButton_Click(object sender, RoutedEventArgs e) {
+			homeTeam.setPen2(HomePenMinutes2.Text, HomePenSeconds2.Text);
+			setPenaltyInformation();
+		}
+
 		private void HomePen1ClearButton_Click(object sender, RoutedEventArgs e) {
 			homeTeam.clearPen1();
 			setPenaltyInformation();
@@ -224,26 +272,6 @@ namespace Scoreboard
 
 		private void HomePen2ClearButton_Click(object sender, RoutedEventArgs e) {
 			homeTeam.clearPen2();
-			setPenaltyInformation();
-		}
-
-		private void HomePenMinutes1_TextChanged(object sender, TextChangedEventArgs e) {
-			homeTeam.setPen1(HomePenMinutes1.Text, HomePenSeconds1.Text);
-			setPenaltyInformation();
-		}
-
-		private void HomePenSeconds1_TextChanged(object sender, TextChangedEventArgs e) {
-			homeTeam.setPen1(HomePenMinutes1.Text, HomePenSeconds1.Text);
-			setPenaltyInformation();
-		}
-
-		private void HomePenMinutes2_TextChanged(object sender, TextChangedEventArgs e) {
-			homeTeam.setPen2(HomePenMinutes2.Text, HomePenSeconds2.Text);
-			setPenaltyInformation();
-		}
-
-		private void HomePenSeconds2_TextChanged(object sender, TextChangedEventArgs e) {
-			homeTeam.setPen2(HomePenMinutes2.Text, HomePenSeconds2.Text);
 			setPenaltyInformation();
 		}
 
@@ -283,6 +311,16 @@ namespace Scoreboard
 			setPenaltyInformation();
 		}
 
+		private void AwayPen2SetButton_Click(object sender, RoutedEventArgs e) {
+			awayTeam.setPen1(AwayPenMinutes1.Text, AwayPenSeconds1.Text);
+			setPenaltyInformation();
+		}
+
+		private void AwayPen1SetButton_Click(object sender, RoutedEventArgs e) {
+			awayTeam.setPen2(AwayPenMinutes2.Text, AwayPenSeconds2.Text);
+			setPenaltyInformation();
+		}
+
 		private void AwayPen1ClearButton_Click(object sender, RoutedEventArgs e) {
 			awayTeam.clearPen1();
 			setPenaltyInformation();
@@ -294,26 +332,5 @@ namespace Scoreboard
 			setPenaltyInformation();
 			awayTeam.printInfo();
 		}
-
-		private void AwayPenMinutes1_TextChanged(object sender, TextChangedEventArgs e) {
-			awayTeam.setPen1(AwayPenMinutes1.Text, AwayPenSeconds1.Text);
-			setPenaltyInformation();
-		}
-
-		private void AwayPenSeconds1_TextChanged(object sender, TextChangedEventArgs e) {
-			awayTeam.setPen1(AwayPenMinutes1.Text, AwayPenSeconds1.Text);
-			setPenaltyInformation();
-		}
-
-		private void AwayPenMinutes2_TextChanged(object sender, TextChangedEventArgs e) {
-			awayTeam.setPen2(AwayPenMinutes2.Text, AwayPenSeconds2.Text);
-			setPenaltyInformation();
-		}
-
-		private void AwayPenSeconds2_TextChanged(object sender, TextChangedEventArgs e) {
-			awayTeam.setPen2(AwayPenMinutes2.Text, AwayPenSeconds2.Text);
-			setPenaltyInformation();
-		}
-
 	}
 }

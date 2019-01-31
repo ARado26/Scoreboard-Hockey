@@ -65,18 +65,28 @@
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
-                <TextBox x:Name="HomePenMinutes1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" TextChanged="HomePenMinutes1_TextChanged"/>
+                <TextBox x:Name="HomePenMinutes1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" />
                 <Label Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
-                <TextBox x:Name="HomePenSeconds1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" TextChanged="HomePenSeconds1_TextChanged"/>
+                <TextBox x:Name="HomePenSeconds1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" />
 				<Grid Grid.Column="3">
-					<Button x:Name="HomePen1ClearButton" Margin="5,10" Click="HomePen1ClearButton_Click">Clear</Button>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<Button x:Name="HomePen1SetButton" Margin="5,10" Click="HomePen1SetButton_Click">Set</Button>
+					<Button x:Name="HomePen1ClearButton" Grid.Column="1" Margin="5,10" Click="HomePen1ClearButton_Click">Clear</Button>
                 </Grid>
 
-                <TextBox x:Name="HomePenMinutes2"  Grid.Row="1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" TextChanged="HomePenMinutes2_TextChanged"/>
+                <TextBox x:Name="HomePenMinutes2"  Grid.Row="1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" />
                 <Label Grid.Row="1" Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
-                <TextBox x:Name="HomePenSeconds2" Grid.Row="1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" TextChanged="HomePenSeconds2_TextChanged"/>
+                <TextBox x:Name="HomePenSeconds2" Grid.Row="1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" />
 				<Grid Grid.Row="1" Grid.Column="3">
-					<Button x:Name="HomePen2ClearButton" Margin="5,10" Click="HomePen2ClearButton_Click">Clear</Button>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<Button x:Name="HomePen2SetButton" Margin="5,10" Click="HomePen2SetButton_Click">Set</Button>
+					<Button x:Name="HomePen2ClearButton" Grid.Column="1" Margin="5,10" Click="HomePen2ClearButton_Click">Clear</Button>
                 </Grid>
 
                 <TextBox x:Name="HomePenMinutesQ"  Grid.Row="2" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" Text="2" MaxLength="2"/>
@@ -116,7 +126,7 @@
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
-                <TextBox x:Name="GameClockMinutes" Margin="50,10,0,10" TextAlignment="Center" FontSize="40" Text="20" MaxLength="2"/>
+                <TextBox x:Name="GameClockMinutes" Margin="50,10,0,10" TextAlignment="Center" FontSize="40" Text="0" MaxLength="2"/>
                 <Label Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="70" Width="20" Margin="2,-3,0,5"  />
                 <TextBox x:Name="GameClockSeconds" Grid.Column="2" TextAlignment="Center" FontSize="40" Text="00" MaxLength="2" Margin="0,10,50,10"/>
                 
@@ -204,18 +214,28 @@
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
-                <TextBox x:Name="AwayPenMinutes1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" TextChanged="AwayPenMinutes1_TextChanged"/>
+                <TextBox x:Name="AwayPenMinutes1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" />
                 <Label Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
-                <TextBox x:Name="AwayPenSeconds1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" TextChanged="AwayPenSeconds1_TextChanged"/>
+                <TextBox x:Name="AwayPenSeconds1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" />
 				<Grid Grid.Column="3">
-					<Button x:Name="AwayPen1ClearButton" Margin="5,10" Click="AwayPen1ClearButton_Click">Clear</Button>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<Button x:Name="AwayPen1SetButton" Margin="5,10" Click="AwayPen1SetButton_Click">Set</Button>
+					<Button x:Name="AwayPen1ClearButton" Grid.Column="1" Margin="5,10" Click="AwayPen1ClearButton_Click">Clear</Button>
                 </Grid>
 
-                <TextBox x:Name="AwayPenMinutes2"  Grid.Row="1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" TextChanged="AwayPenMinutes2_TextChanged"/>
+                <TextBox x:Name="AwayPenMinutes2"  Grid.Row="1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" />
                 <Label Grid.Row="1" Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
-                <TextBox x:Name="AwayPenSeconds2" Grid.Row="1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" TextChanged="AwayPenSeconds2_TextChanged"/>
+                <TextBox x:Name="AwayPenSeconds2" Grid.Row="1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" />
 				<Grid Grid.Row="1" Grid.Column="3">
-					<Button x:Name="AwayPen2ClearButton" Margin="5,10" Click="AwayPen2ClearButton_Click">Clear</Button>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<Button x:Name="AwayPen2SetButton" Margin="5,10" Click="AwayPen2SetButton_Click">Set</Button>
+					<Button x:Name="AwayPen2ClearButton" Grid.Column="1" Margin="5,10" Click="AwayPen2ClearButton_Click">Clear</Button>
                 </Grid>
 
                 <TextBox x:Name="AwayPenMinutesQ"  Grid.Row="2" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" Text="2" MaxLength="2"/>
