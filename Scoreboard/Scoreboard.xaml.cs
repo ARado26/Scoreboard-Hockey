@@ -66,6 +66,10 @@ namespace Scoreboard
 			Console.WriteLine("Clock Mode: " + clockState);
 		}
 
+		private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+			Keyboard.ClearFocus();
+		}
+
 		//=================================================
 		// Game Info Methods
 		//=================================================
@@ -224,19 +228,23 @@ namespace Scoreboard
 		}
 
 		private void HomePenMinutes1_TextChanged(object sender, TextChangedEventArgs e) {
-
+			homeTeam.setPen1(HomePenMinutes1.Text, HomePenSeconds1.Text);
+			setPenaltyInformation();
 		}
 
 		private void HomePenSeconds1_TextChanged(object sender, TextChangedEventArgs e) {
-
+			homeTeam.setPen1(HomePenMinutes1.Text, HomePenSeconds1.Text);
+			setPenaltyInformation();
 		}
 
 		private void HomePenMinutes2_TextChanged(object sender, TextChangedEventArgs e) {
-
+			homeTeam.setPen2(HomePenMinutes2.Text, HomePenSeconds2.Text);
+			setPenaltyInformation();
 		}
 
 		private void HomePenSeconds2_TextChanged(object sender, TextChangedEventArgs e) {
-
+			homeTeam.setPen2(HomePenMinutes2.Text, HomePenSeconds2.Text);
+			setPenaltyInformation();
 		}
 
 		//=================================================
@@ -288,23 +296,24 @@ namespace Scoreboard
 		}
 
 		private void AwayPenMinutes1_TextChanged(object sender, TextChangedEventArgs e) {
-
+			awayTeam.setPen1(AwayPenMinutes1.Text, AwayPenSeconds1.Text);
+			setPenaltyInformation();
 		}
 
 		private void AwayPenSeconds1_TextChanged(object sender, TextChangedEventArgs e) {
-
+			awayTeam.setPen1(AwayPenMinutes1.Text, AwayPenSeconds1.Text);
+			setPenaltyInformation();
 		}
 
 		private void AwayPenMinutes2_TextChanged(object sender, TextChangedEventArgs e) {
-
+			awayTeam.setPen2(AwayPenMinutes2.Text, AwayPenSeconds2.Text);
+			setPenaltyInformation();
 		}
 
 		private void AwayPenSeconds2_TextChanged(object sender, TextChangedEventArgs e) {
-
+			awayTeam.setPen2(AwayPenMinutes2.Text, AwayPenSeconds2.Text);
+			setPenaltyInformation();
 		}
 
-		private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			Keyboard.ClearFocus();
-		}
 	}
 }

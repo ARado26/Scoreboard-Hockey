@@ -94,6 +94,22 @@ namespace Scoreboard{
 			// END TEST
 		}
 
+		public void setPen1(string minutesString, string secondsString) {
+			penalty1 = 0;
+			queuePenalty(minutesString, secondsString);
+			// TEST
+			managePenalties();
+			// END TEST
+		}
+
+		public void setPen2(string minutesString, string secondsString) {
+			penalty2 = 0;
+			queuePenalty(minutesString, secondsString);
+			// TEST
+			managePenalties();
+			// END TEST
+		}
+
 		public int getAmtOfQueuedPenalties() {
 			return penaltyQueue.Count();
 		}
