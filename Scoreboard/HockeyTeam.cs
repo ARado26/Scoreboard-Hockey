@@ -140,6 +140,7 @@ namespace Scoreboard{
 					}
 				}
 			}
+			calculateAndSetActiveSkaters();
 		}
 
 		private bool penaltyQueuedAndPenaltySlotAvailable() {
