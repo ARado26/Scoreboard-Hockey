@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -26,11 +27,10 @@ namespace Scoreboard
 		public HockeyTeam awayTeam { get; set; }
 		public GameInfo gameInfo { get; set; }
 		public GameTimer timer { get; set; }
-		public System.Timers.Timer passiveTimer { get; set; }
 
 		private enum CLOCK_STATES{ STOPPED, RUNNING }
 		private CLOCK_STATES clockState;
-		private const int REFRESH_INTERVAL = 100;
+		private const int REFRESH_INTERVAL = 10;
 
 
         public MainWindow()
@@ -46,7 +46,6 @@ namespace Scoreboard
 			awayTeam = new HockeyTeam("AWAY");
 			timer = new GameTimer(REFRESH_INTERVAL);
 			timer.TimeExpired += HandleTimeExpiration;
-			passiveTimer = new System.Timers.Timer(REFRESH_INTERVAL);
 			
 
 			timer.setTimerFields(gameInfo, homeTeam, awayTeam);
@@ -67,7 +66,6 @@ namespace Scoreboard
 			awayTeam.goaliePulled = false;
 
 			setPenaltyInformation();
-
 		}
 
 		public void printInfo() {
@@ -134,14 +132,19 @@ namespace Scoreboard
 		private void HandleTimeExpiration(object sender, EventArgs e) {
 			clockState = CLOCK_STATES.STOPPED;
 			extractTimerFields();
-			//toggleClockButtonText();
-			//toggleClockTextBoxElements();
+			this.Dispatcher.Invoke(() => {
+				toggleClockButtonText();
+				toggleClockTextBoxElements();
+			}
+			);
 			Console.WriteLine("Time Expired: Handled");
 		}
 
 		private void toggleClockTextBoxElements() {
 			GameClockMinutes.IsEnabled = !GameClockMinutes.IsEnabled;
 			GameClockSeconds.IsEnabled = !GameClockSeconds.IsEnabled;
+
+			ClockSetButton.IsEnabled = !ClockSetButton.IsEnabled;
 
 			HomePenMinutes1.IsEnabled = !HomePenMinutes1.IsEnabled;
 			HomePenSeconds1.IsEnabled = !HomePenSeconds1.IsEnabled;
@@ -201,6 +204,7 @@ namespace Scoreboard
 		}
 
 		private void toggleClockButtonText() {
+			Console.WriteLine(clockState);
 			if (clockState == CLOCK_STATES.STOPPED) {
 				ClockToggleButton.Content = "Start";
 			}
