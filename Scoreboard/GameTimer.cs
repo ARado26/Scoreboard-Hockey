@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Collections.Concurrent;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -17,6 +18,7 @@ namespace Scoreboard {
 		public TimeSpan awayPen1 { get; private set; }
 		public TimeSpan awayPen2 { get; private set; }
 
+		public ConcurrentQueue<Tuple<String,TimeSpan>> penaltyQueue { get; set; }
 
 		public delegate void RefreshHandler(object sender, TimerEventArgs e);
 		public event RefreshHandler TimeStopped;
@@ -24,7 +26,7 @@ namespace Scoreboard {
 
 		public bool Running { get; private set; }
 
-
+		
 		private Timer timer;
 		private int interval;
 
@@ -35,6 +37,7 @@ namespace Scoreboard {
 
 		public GameTimer(int millisecondsInterval) {
 			interval = millisecondsInterval;
+			penaltyQueue = new ConcurrentQueue<Tuple<string, TimeSpan>>();
 			timer = new Timer(interval);
 			timer.Elapsed += adjustTimersHandler;
 			Running = false;
@@ -67,6 +70,10 @@ namespace Scoreboard {
 			awayPen2 = away.penalty2;
 		}
 
+		public void enqueuePenalty(string team, TimeSpan pen) {
+			penaltyQueue.Enqueue(new Tuple<string, TimeSpan>(team, pen));
+		}
+
 
 		private void adjustTimers() {
 			now = System.DateTime.Now;
@@ -78,12 +85,7 @@ namespace Scoreboard {
 			awayPen1 -= elapsedTime;
 			awayPen2 -= elapsedTime;
 			handleNegativeTimers();
-			//Console.WriteLine("Elapsed:" + elapsedTime);
-			//Console.WriteLine("GameTime:" + gameClock);
-			//Console.WriteLine("HomePen1:" + homePen1);
-			//Console.WriteLine("HomePen2:" + homePen2);
-			//Console.WriteLine("AwayPen1:" + awayPen1);
-			//Console.WriteLine("AwayPen2:" + awayPen2);
+			checkQueueForNewPenalty();
 		}
 
 		private void handleNegativeTimers() {
@@ -101,6 +103,27 @@ namespace Scoreboard {
 			}
 			if (awayPen2.TotalMilliseconds < 0) {
 				awayPen2 = new TimeSpan();
+			}
+		}
+
+		private void checkQueueForNewPenalty() {
+			if (penaltyQueue.TryDequeue(out Tuple<string,TimeSpan> pen)) {
+				string team = pen.Item1;
+				TimeSpan penalty = pen.Item2;
+				if(team == "HOME") {
+					if (homePen1.TotalMilliseconds == 0) {
+						homePen1 = penalty;
+					} else if (homePen2.TotalMilliseconds == 0) {
+						homePen2 = penalty;
+					}
+				} else { // AWAY
+					if (awayPen1.TotalMilliseconds == 0) {
+						awayPen1 = penalty;
+					}
+					else if (awayPen2.TotalMilliseconds == 0) {
+						awayPen2 = penalty;
+					}
+				}
 			}
 		}
 

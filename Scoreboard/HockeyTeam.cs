@@ -58,15 +58,8 @@ namespace Scoreboard{
 			activeSkaters = skaters;
 		}
 
-		public void queuePenalty(string minutesString, string secondsString) {
-			Console.WriteLine("Queueing Penalty " + System.DateTime.Now.ToLongTimeString());
-			TimeSpan penaltyTime = new TimeSpan();
-			if (int.TryParse(minutesString, out int mins)) {
-				if (int.TryParse(secondsString, out int sec)) {
-					penaltyTime = new TimeSpan(0, mins, sec);
-					penaltyQueue.Enqueue(penaltyTime);
-				}
-			}
+		public void queuePenalty(TimeSpan penaltyTime) {
+			penaltyQueue.Enqueue(penaltyTime);
 		}
 
 		public void clearPen1() {
@@ -77,14 +70,14 @@ namespace Scoreboard{
 			penalty2 = new TimeSpan();
 		}
 
-		public void setPen1(string minutesString, string secondsString) {
+		public void setPen1(TimeSpan penaltyTime) {
 			penalty1 = new TimeSpan();
-			queuePenalty(minutesString, secondsString);
+			queuePenalty(penaltyTime);
 		}
 
-		public void setPen2(string minutesString, string secondsString) {
+		public void setPen2(TimeSpan penaltyTime) {
 			penalty2 = new TimeSpan();
-			queuePenalty(minutesString, secondsString);
+			queuePenalty(penaltyTime);
 		}
 
 		public int getAmtOfQueuedPenalties() {
@@ -109,8 +102,7 @@ namespace Scoreboard{
 			Console.WriteLine("\tPen2: " + penalty2);
 			Console.WriteLine("\tPenQSize: " + penaltyQueue.Count);
 		}
-
-		// CALL IN TIMER ONLY
+		
 		public void managePenalties() {
 			while (penaltyQueuedAndPenaltySlotAvailable()) {
 				if(penalty1.TotalMilliseconds == 0) {

@@ -76,6 +76,16 @@ namespace Scoreboard
 			Console.WriteLine("Clock Mode: " + clockState);
 		}
 
+		public TimeSpan formatPenalty(string minutesString, string secondsString) {
+			TimeSpan penaltyTime = new TimeSpan();
+			if (int.TryParse(minutesString, out int mins)) {
+				if (int.TryParse(secondsString, out int sec)) {
+					penaltyTime = new TimeSpan(0, mins, sec);
+				}
+			}
+			return penaltyTime;
+		}
+
 		private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			Keyboard.ClearFocus();
 		}
@@ -144,6 +154,7 @@ namespace Scoreboard
 				homeTeam.managePenalties();
 				awayTeam.managePenalties();
 			});
+			checkForDequeuedPenalties(e);
 		}
 
 		private void toggleClockTextBoxElements() {
@@ -176,8 +187,8 @@ namespace Scoreboard
 				HomePenSeconds1.Text = (s.Length > 1 ? s : '0' + s);
 			}
 			else {
-				HomePenMinutes1.Text = "";
-				HomePenSeconds1.Text = "";
+				HomePenMinutes1.Text = "0";
+				HomePenSeconds1.Text = "00";
 			}
 
 			if (homeTeam.penalty2.TotalMilliseconds != 0) {
@@ -186,8 +197,8 @@ namespace Scoreboard
 				HomePenSeconds2.Text = (s.Length > 1 ? s : '0' + s);
 			}
 			else {
-				HomePenMinutes2.Text = "";
-				HomePenSeconds2.Text = "";
+				HomePenMinutes2.Text = "0";
+				HomePenSeconds2.Text = "00";
 			}
 
 			if (awayTeam.penalty1.TotalMilliseconds != 0) {
@@ -196,8 +207,8 @@ namespace Scoreboard
 				AwayPenSeconds1.Text = (s.Length > 1 ? s : '0' + s);
 			}
 			else {
-				AwayPenMinutes1.Text = "";
-				AwayPenSeconds1.Text = "";
+				AwayPenMinutes1.Text = "0";
+				AwayPenSeconds1.Text = "00";
 			}
 
 			if (awayTeam.penalty2.TotalMilliseconds != 0) {
@@ -206,8 +217,8 @@ namespace Scoreboard
 				AwayPenSeconds2.Text = (s.Length > 1 ? s : '0' + s);
 			}
 			else {
-				AwayPenMinutes2.Text = "";
-				AwayPenSeconds2.Text = "";
+				AwayPenMinutes2.Text = "0";
+				AwayPenSeconds2.Text = "00";
 			}
 
 			HomePenaltiesQueued.Content = homeTeam.getAmtOfQueuedPenalties().ToString();
@@ -229,6 +240,21 @@ namespace Scoreboard
 			homeTeam.penalty2 = e.homePen2;
 			awayTeam.penalty1 = e.awayPen1;
 			awayTeam.penalty2 = e.awayPen2;
+		}
+
+		private void checkForDequeuedPenalties(TimerEventArgs e) {
+			if (!homeTeam.penalty1.Equals(e.homePen1)) {
+				timer.enqueuePenalty("HOME", homeTeam.penalty1);
+			}
+			if (!homeTeam.penalty2.Equals(e.homePen2)) {
+				timer.enqueuePenalty("HOME", homeTeam.penalty2);
+			}
+			if (!awayTeam.penalty1.Equals(e.awayPen1)) {
+				timer.enqueuePenalty("AWAY", awayTeam.penalty1);
+			}
+			if (!awayTeam.penalty2.Equals(e.awayPen2)) {
+				timer.enqueuePenalty("AWAY", awayTeam.penalty2);
+			}
 		}
 
 		private void setGameClockInformation() {
@@ -269,17 +295,25 @@ namespace Scoreboard
 		}
 
 		private void HomePenQueueButton_Click(object sender, RoutedEventArgs e) {
-			homeTeam.queuePenalty(HomePenMinutesQ.Text, HomePenSecondsQ.Text);
+			TimeSpan queuedPenalty = formatPenalty(HomePenMinutesQ.Text, HomePenSecondsQ.Text);
+			if (timer.Running) {
+				timer.enqueuePenalty("HOME", queuedPenalty);
+			}
+			else {
+				homeTeam.queuePenalty(queuedPenalty);
+			}
 			setPenaltyInformation();
 		}
 
 		private void HomePen1SetButton_Click(object sender, RoutedEventArgs e) {
-			homeTeam.setPen1(HomePenMinutes1.Text, HomePenSeconds1.Text);
+			TimeSpan queuedPenalty = formatPenalty(HomePenMinutes1.Text, HomePenSeconds1.Text);
+			homeTeam.setPen1(queuedPenalty);
 			setPenaltyInformation();
 		}
 
 		private void HomePen2SetButton_Click(object sender, RoutedEventArgs e) {
-			homeTeam.setPen2(HomePenMinutes2.Text, HomePenSeconds2.Text);
+			TimeSpan queuedPenalty = formatPenalty(HomePenMinutes2.Text, HomePenSeconds2.Text);
+			homeTeam.setPen2(queuedPenalty);
 			setPenaltyInformation();
 		}
 
@@ -325,17 +359,25 @@ namespace Scoreboard
 		}
 
 		private void AwayPenQueueButton_Click(object sender, RoutedEventArgs e) {
-			awayTeam.queuePenalty(AwayPenMinutesQ.Text, AwayPenSecondsQ.Text);
-			setPenaltyInformation();
-		}
-
-		private void AwayPen2SetButton_Click(object sender, RoutedEventArgs e) {
-			awayTeam.setPen1(AwayPenMinutes1.Text, AwayPenSeconds1.Text);
+			TimeSpan queuedPenalty = formatPenalty(HomePenMinutesQ.Text, HomePenSecondsQ.Text);
+			if (timer.Running) {
+				timer.enqueuePenalty("AWAY", queuedPenalty);
+			}
+			else {
+				awayTeam.queuePenalty(queuedPenalty);
+			}
 			setPenaltyInformation();
 		}
 
 		private void AwayPen1SetButton_Click(object sender, RoutedEventArgs e) {
-			awayTeam.setPen2(AwayPenMinutes2.Text, AwayPenSeconds2.Text);
+			TimeSpan queuedPenalty = formatPenalty(HomePenMinutes1.Text, HomePenSeconds1.Text);
+			awayTeam.setPen2(queuedPenalty);
+			setPenaltyInformation();
+		}
+
+		private void AwayPen2SetButton_Click(object sender, RoutedEventArgs e) {
+			TimeSpan queuedPenalty = formatPenalty(HomePenMinutes2.Text, HomePenSeconds2.Text);
+			awayTeam.setPen1(queuedPenalty);
 			setPenaltyInformation();
 		}
 
