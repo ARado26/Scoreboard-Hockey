@@ -166,7 +166,7 @@
             </Grid>
 
             <Grid Grid.Row="4">
-                <TextBlock x:Name="debug" FontSize = "18" Margin = "5" Text = "DEBUG" TextAlignment="Center" TextWrapping="Wrap" />
+                <TextBlock x:Name="DEBUG_LABEL" FontSize = "18" Margin = "5" Text = "DEBUG" TextAlignment="Center" TextWrapping="Wrap" />
             </Grid>
         </Grid>
 
