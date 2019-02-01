@@ -14,6 +14,7 @@
 		ResizeMode="NoResize" 
 		Topmost="True"
 		MouseDoubleClick="Window_MouseDoubleClick"
+		Closing="Window_Closing"
 		>
     <Grid x:Name="MainGrid" VerticalAlignment="Center" >
         <Grid.ColumnDefinitions>

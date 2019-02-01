@@ -103,6 +103,10 @@ namespace Scoreboard
 			Keyboard.ClearFocus();
 		}
 
+		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+			
+		}
+
 		//=================================================
 		// Game Info Methods
 		//=================================================
@@ -158,7 +162,7 @@ namespace Scoreboard
 		private void HandleTimeStoppage(object sender, TimerEventArgs e) {
 			clockState = CLOCK_STATES.STOPPED;
 			extractTimerFields(e);
-			this.Dispatcher.Invoke(() => {
+			this.Dispatcher.InvokeAsync(() => {
 				toggleClockButtonText();
 				toggleClockTextBoxElements();
 			});
@@ -166,14 +170,14 @@ namespace Scoreboard
 
 		private void HandleRefresh(Object sender, TimerEventArgs e) {
 			extractTimerFields(e);
-			this.Dispatcher.Invoke(() => {
+			this.Dispatcher.InvokeAsync(() => {
 				setGameClockInformation();
 				setPenaltyInformation();
 				homeTeam.managePenalties();
 				awayTeam.managePenalties();
 			});
 			checkForDequeuedPenalties(e);
-			if (++refreshes/10 != 0) {
+			if (++refreshes/100 != 0) {
 				printInfo();
 				refreshes = 0;
 			}
@@ -187,13 +191,18 @@ namespace Scoreboard
 
 			HomePenMinutes1.IsEnabled = !HomePenMinutes1.IsEnabled;
 			HomePenSeconds1.IsEnabled = !HomePenSeconds1.IsEnabled;
+			HomePen1SetButton.IsEnabled = !HomePen1SetButton.IsEnabled;
 			HomePenMinutes2.IsEnabled = !HomePenMinutes2.IsEnabled;
 			HomePenSeconds2.IsEnabled = !HomePenSeconds2.IsEnabled;
+			HomePen2SetButton.IsEnabled = !HomePen2SetButton.IsEnabled;
 
 			AwayPenMinutes1.IsEnabled = !AwayPenMinutes1.IsEnabled;
 			AwayPenSeconds1.IsEnabled = !AwayPenSeconds1.IsEnabled;
+			AwayPen1SetButton.IsEnabled = !AwayPen1SetButton.IsEnabled;
 			AwayPenMinutes2.IsEnabled = !AwayPenMinutes2.IsEnabled;
 			AwayPenSeconds2.IsEnabled = !AwayPenSeconds2.IsEnabled;
+			AwayPen2SetButton.IsEnabled = !AwayPen2SetButton.IsEnabled;
+
 		}
 
 		private void setPenaltyInformation() {
@@ -291,7 +300,9 @@ namespace Scoreboard
 
 		// small decimal differences inspire creation of phantom penalties
 		private bool penaltiesEqualTolerant(TimeSpan p1, TimeSpan p2) {
-			return (int)p1.TotalMilliseconds == (int)p2.TotalMilliseconds;
+			return (int)p1.TotalMilliseconds + 50 >= (int)p2.TotalMilliseconds 
+				&&
+				(int)p2.TotalMilliseconds >= (int)p1.TotalMilliseconds - 50;
 		}
 
 		//=================================================
@@ -358,16 +369,21 @@ namespace Scoreboard
 		}
 
 		private void HomePen1ClearButton_Click(object sender, RoutedEventArgs e) {
+			if (timer.Running) {
+				timer.clearPenalty("HOME1");
+			}
 			homeTeam.clearPen1();
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Clearing First Home Penalty";
 		}
 
 		private void HomePen2ClearButton_Click(object sender, RoutedEventArgs e) {
+			if (timer.Running) {
+				timer.clearPenalty("HOME2");
+			}
 			homeTeam.clearPen2();
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Clearing Second Home Penalty";
-
 		}
 
 		//=================================================
@@ -434,15 +450,23 @@ namespace Scoreboard
 		}
 
 		private void AwayPen1ClearButton_Click(object sender, RoutedEventArgs e) {
+			if (timer.Running) {
+				timer.clearPenalty("AWAY1");
+			}
 			awayTeam.clearPen1();
+
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Clearing First Away Penalty";
 		}
 
 		private void AwayPen2ClearButton_Click(object sender, RoutedEventArgs e) {
+			if (timer.Running) {
+				timer.clearPenalty("AWAY2");
+			}
 			awayTeam.clearPen2();
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Clearing Second Away Penalty";
 		}
+
 	}
 }

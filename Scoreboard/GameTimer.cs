@@ -19,6 +19,7 @@ namespace Scoreboard {
 		public TimeSpan awayPen2 { get; private set; }
 
 		public ConcurrentQueue<Tuple<String,TimeSpan>> penaltyQueue { get; set; }
+		public ConcurrentQueue<string> clearQueue { get; set; }
 
 		public delegate void RefreshHandler(object sender, TimerEventArgs e);
 		public event RefreshHandler TimeStopped;
@@ -38,6 +39,7 @@ namespace Scoreboard {
 		public GameTimer(int millisecondsInterval) {
 			interval = millisecondsInterval;
 			penaltyQueue = new ConcurrentQueue<Tuple<string, TimeSpan>>();
+			clearQueue = new ConcurrentQueue<string>();
 			timer = new Timer(interval);
 			timer.Elapsed += adjustTimersHandler;
 			Running = false;
@@ -74,11 +76,16 @@ namespace Scoreboard {
 			penaltyQueue.Enqueue(new Tuple<string, TimeSpan>(team, pen));
 		}
 
+		public void clearPenalty(string penaltyName) {
+			clearQueue.Enqueue(penaltyName);
+		}
+
 
 		private void adjustTimers() {
 			now = System.DateTime.Now;
 			elapsedTime = (now - refreshStart);
 			refreshStart = now;
+			checkQueueForClearInstruction();
 			gameClock -= elapsedTime;
 			homePen1 -= elapsedTime;
 			homePen2 -= elapsedTime;
@@ -123,6 +130,25 @@ namespace Scoreboard {
 					else if (awayPen2.TotalMilliseconds == 0) {
 						awayPen2 = penalty;
 					}
+				}
+			}
+		}
+
+		private void checkQueueForClearInstruction() {
+			if (clearQueue.TryDequeue(out string penaltyName)) {
+				switch (penaltyName) {
+					case "HOME1":
+						homePen1 = new TimeSpan();
+						break;
+					case "HOME2":
+						homePen2 = new TimeSpan();
+						break;
+					case "AWAY1":
+						awayPen1 = new TimeSpan();
+						break;
+					case "AWAY2":
+						awayPen2 = new TimeSpan();
+						break;
 				}
 			}
 		}
