@@ -30,26 +30,33 @@ namespace Scoreboard
 
 		private enum CLOCK_STATES{ STOPPED, RUNNING }
 		private CLOCK_STATES clockState;
+
+		private int refreshes = 0;
+
 		private const int REFRESH_INTERVAL = 10;
-
-
+		
         public MainWindow()
         {
-            InitializeComponent();
 
-			init();
+			initData();
+            InitializeComponent();
+			initInterfaceAndRelatedData();
 		}
 
-		public void init() {
+		public void initData() {
 			gameInfo = new GameInfo();
 			homeTeam = new HockeyTeam("HOME");
 			awayTeam = new HockeyTeam("AWAY");
 			timer = new GameTimer(REFRESH_INTERVAL);
+		}
+
+		public void initInterfaceAndRelatedData() {
 			timer.TimeStopped += HandleTimeStoppage;
 			timer.Refresh += HandleRefresh;
 			
-
 			timer.setTimerFields(gameInfo, homeTeam, awayTeam);
+
+			GamePeriodPicker.SelectedIndex = 0;
 
 			HomeNameTextBox.Text = homeTeam.name;
 			HomeScore.Text = homeTeam.score.ToString();
@@ -66,8 +73,11 @@ namespace Scoreboard
 			homeTeam.goaliePulled = false;
 			awayTeam.goaliePulled = false;
 
+			DEBUG_LABEL.Text = "DEBUG";
+
 			setPenaltyInformation();
 		}
+			
 
 		public void printInfo() {
 			gameInfo.printInfo();
@@ -128,7 +138,8 @@ namespace Scoreboard
 			string period = ((ComboBoxItem)GamePeriodPicker.SelectedItem).Content.ToString();
 			gameInfo.setPeriod(period);
 			GamePeriod.Text = period;
-        }
+			DEBUG_LABEL.Text = "Period Set: " + GamePeriod.Text;
+		}
 
 		private void GamePeriodSetter_Click(object sender, RoutedEventArgs e) {
 			gameInfo.setPeriod(GamePeriod.Text);
@@ -137,7 +148,8 @@ namespace Scoreboard
 
 		private void ResetAllButton_Click(object sender, RoutedEventArgs e) {
 			DEBUG_LABEL.Text = "Reset All Fields";
-			init();
+			initData();
+			initInterfaceAndRelatedData();
 		}
 
 		private void HandleTimeStoppage(object sender, TimerEventArgs e) {
@@ -158,6 +170,10 @@ namespace Scoreboard
 				awayTeam.managePenalties();
 			});
 			checkForDequeuedPenalties(e);
+			if (++refreshes/10 != 0) {
+				printInfo();
+				refreshes = 0;
+			}
 		}
 
 		private void toggleClockTextBoxElements() {
@@ -290,6 +306,7 @@ namespace Scoreboard
 		private void HomeScore_TextChanged(object sender, TextChangedEventArgs e) {
 			homeTeam.setScore(HomeScore.Text);
 			HomeScore.Text = homeTeam.score.ToString();
+			DEBUG_LABEL.Text = "Set Home Score: " + HomeScore.Text;
 		}
 
 		private void HomeGoaliePulled_Checked(object sender, RoutedEventArgs e) {
@@ -365,6 +382,7 @@ namespace Scoreboard
 		private void AwayScore_TextChanged(object sender, TextChangedEventArgs e) {
 			awayTeam.setScore(AwayScore.Text);
 			AwayScore.Text = awayTeam.score.ToString();
+			DEBUG_LABEL.Text = "Set Away Score: " + HomeScore.Text;
 		}
 
 		private void AwayGoaliePulled_Checked(object sender, RoutedEventArgs e) {
@@ -375,7 +393,6 @@ namespace Scoreboard
 		private void AwayGoaliePulled_Unchecked(object sender, RoutedEventArgs e) {
 			awayTeam.toggleGoaliePulled();
 			DEBUG_LABEL.Text = "Away Goalie In Net";
-
 		}
 
 		private void AwayPenQueueButton_Click(object sender, RoutedEventArgs e) {

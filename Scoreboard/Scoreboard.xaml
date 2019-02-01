@@ -145,7 +145,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBox x:Name="GamePeriod" Grid.ColumnSpan="2" Margin="80,10" TextAlignment="Center" FontSize="40" Text="" MaxLength="5"/>
-                <ComboBox x:Name="GamePeriodPicker" Grid.Row="1" Margin="50,10,10,10" SelectedIndex="0" SelectionChanged="GamePeriodPicker_SelectionChanged">
+                <ComboBox x:Name="GamePeriodPicker" Grid.Row="1" Margin="50,10,10,10" SelectionChanged="GamePeriodPicker_SelectionChanged">
                     <ComboBoxItem>PG</ComboBoxItem>
                     <ComboBoxItem>1st</ComboBoxItem>
                     <ComboBoxItem>1INT</ComboBoxItem>
