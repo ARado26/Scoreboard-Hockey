@@ -56,6 +56,10 @@ namespace Scoreboard
 			
 			timer.setTimerFields(gameInfo, homeTeam, awayTeam);
 
+
+			GameClockMinutes.Text = gameInfo.gameTime.Minutes.ToString();
+			string s = gameInfo.gameTime.Seconds.ToString();
+			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
 			GamePeriodPicker.SelectedIndex = 0;
 
 			HomeNameTextBox.Text = homeTeam.name;
@@ -77,7 +81,6 @@ namespace Scoreboard
 
 			setPenaltyInformation();
 		}
-			
 
 		public void printInfo() {
 			gameInfo.printInfo();
@@ -127,10 +130,10 @@ namespace Scoreboard
 			string minutesString = GameClockMinutes.Text;
 			string secondsString = GameClockSeconds.Text;
 			gameInfo.setGameTime(minutesString, secondsString);
-			GameClockMinutes.Text = gameInfo.minutes.ToString();
-			string s = gameInfo.seconds.ToString();
+			GameClockMinutes.Text = gameInfo.gameTime.Minutes.ToString();
+			string s = gameInfo.gameTime.Seconds.ToString();
 			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
-            DEBUG_LABEL.Text = "Setting Clock: " + gameInfo.minutes + ':' + (s.Length > 1 ? s : '0' + s);
+            DEBUG_LABEL.Text = "Setting Clock: " + GameClockMinutes.Text + ':' + GameClockSeconds.Text;
 
         }
 

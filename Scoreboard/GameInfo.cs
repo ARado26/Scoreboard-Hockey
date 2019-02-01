@@ -9,16 +9,12 @@ namespace Scoreboard
     public class GameInfo
     {
 		public TimeSpan gameTime { get; set; }
-		public int minutes { get; set; }
-		public int seconds { get; set; }
 		public string period { get; set; }
 		
 
 		public GameInfo() {
 			gameTime = new TimeSpan();
 			period = "PG";
-			minutes = 0;
-			seconds = 0;
 		}
 
 		public void setGameTime(String minutesString, String secondsString) {
@@ -29,8 +25,8 @@ namespace Scoreboard
 					totalSeconds += mins * 60;
 				}
 			}
-			minutes = totalSeconds / 60;
-			seconds = totalSeconds % 60;
+			int minutes = totalSeconds / 60;
+			int seconds = totalSeconds % 60;
 			gameTime = new TimeSpan(0, minutes, seconds);
 		}
 
@@ -40,8 +36,6 @@ namespace Scoreboard
 
 		public void printInfo() {
 			Console.WriteLine("GameTime: " + gameTime.ToString());
-			Console.WriteLine("Minutes: " + minutes.ToString());
-			Console.WriteLine("Seconds: " + seconds.ToString());
 			Console.WriteLine("Period: " + period);
 		}
 		
