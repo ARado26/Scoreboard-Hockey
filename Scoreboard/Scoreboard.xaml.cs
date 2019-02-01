@@ -420,14 +420,14 @@ namespace Scoreboard
 		}
 
 		private void AwayPen1SetButton_Click(object sender, RoutedEventArgs e) {
-			TimeSpan queuedPenalty = formatPenalty(HomePenMinutes1.Text, HomePenSeconds1.Text);
+			TimeSpan queuedPenalty = formatPenalty(AwayPenMinutes1.Text, AwayPenSeconds1.Text);
 			awayTeam.setPen1(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting First Away Penalty";
 		}
 
 		private void AwayPen2SetButton_Click(object sender, RoutedEventArgs e) {
-			TimeSpan queuedPenalty = formatPenalty(HomePenMinutes2.Text, HomePenSeconds2.Text);
+			TimeSpan queuedPenalty = formatPenalty(AwayPenMinutes2.Text, AwayPenSeconds2.Text);
 			awayTeam.setPen2(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting Second Away Penalty";
@@ -436,14 +436,12 @@ namespace Scoreboard
 		private void AwayPen1ClearButton_Click(object sender, RoutedEventArgs e) {
 			awayTeam.clearPen1();
 			setPenaltyInformation();
-			awayTeam.printInfo();
 			DEBUG_LABEL.Text = "Clearing First Away Penalty";
 		}
 
 		private void AwayPen2ClearButton_Click(object sender, RoutedEventArgs e) {
 			awayTeam.clearPen2();
 			setPenaltyInformation();
-			awayTeam.printInfo();
 			DEBUG_LABEL.Text = "Clearing Second Away Penalty";
 		}
 	}
