@@ -125,10 +125,13 @@ namespace Scoreboard
         }
 
         private void GamePeriodPicker_SelectionChanged(object sender, SelectionChangedEventArgs e){
-            GamePeriod.Text = ((ComboBoxItem) GamePeriodPicker.SelectedItem).Content.ToString();
+			string period = ((ComboBoxItem)GamePeriodPicker.SelectedItem).Content.ToString();
+			gameInfo.setPeriod(period);
+			GamePeriod.Text = period;
         }
 
 		private void GamePeriodSetter_Click(object sender, RoutedEventArgs e) {
+			gameInfo.setPeriod(GamePeriod.Text);
 			debug.Text = "Period Set: " + GamePeriod.Text;
 		}
 
