@@ -45,7 +45,8 @@ namespace Scoreboard
 			homeTeam = new HockeyTeam("HOME");
 			awayTeam = new HockeyTeam("AWAY");
 			timer = new GameTimer(REFRESH_INTERVAL);
-			timer.TimeExpired += HandleTimeExpiration;
+			timer.TimeStopped += HandleTimeStoppage;
+			timer.Refresh += HandleRefresh;
 			
 
 			timer.setTimerFields(gameInfo, homeTeam, awayTeam);
@@ -91,15 +92,12 @@ namespace Scoreboard
 				timer.setTimerFields(gameInfo, homeTeam, awayTeam);
 				timer.startClock();
 				clockState = CLOCK_STATES.RUNNING;
+				toggleClockButtonText();
+				toggleClockTextBoxElements();
 			}
 			else {
 				timer.stopClock();
-				extractTimerFields();
-				clockState = CLOCK_STATES.STOPPED;
 			}
-
-			toggleClockButtonText();
-			toggleClockTextBoxElements();
 
 			debug.Text = "Toggle Clock Mode: " + clockState;
         }
@@ -129,15 +127,23 @@ namespace Scoreboard
 			init();
 		}
 
-		private void HandleTimeExpiration(object sender, EventArgs e) {
+		private void HandleTimeStoppage(object sender, TimerEventArgs e) {
 			clockState = CLOCK_STATES.STOPPED;
-			extractTimerFields();
+			extractTimerFields(e);
 			this.Dispatcher.Invoke(() => {
 				toggleClockButtonText();
 				toggleClockTextBoxElements();
-			}
-			);
-			Console.WriteLine("Time Expired: Handled");
+			});
+		}
+
+		private void HandleRefresh(Object sender, TimerEventArgs e) {
+			extractTimerFields(e);
+			this.Dispatcher.Invoke(() => {
+				setGameClockInformation();
+				setPenaltyInformation();
+				homeTeam.managePenalties();
+				awayTeam.managePenalties();
+			});
 		}
 
 		private void toggleClockTextBoxElements() {
@@ -158,6 +164,11 @@ namespace Scoreboard
 		}
 
 		private void setPenaltyInformation() {
+
+			if (!timer.Running) {
+				homeTeam.managePenalties();
+				awayTeam.managePenalties();
+			}
 
 			if (homeTeam.penalty1.TotalMilliseconds != 0) {
 				HomePenMinutes1.Text = homeTeam.penalty1.Minutes.ToString();
@@ -204,7 +215,6 @@ namespace Scoreboard
 		}
 
 		private void toggleClockButtonText() {
-			Console.WriteLine(clockState);
 			if (clockState == CLOCK_STATES.STOPPED) {
 				ClockToggleButton.Content = "Start";
 			}
@@ -213,15 +223,19 @@ namespace Scoreboard
 			}
 		}
 
-		private void extractTimerFields() {
-			gameInfo.gameTime = timer.gameClock;
-			homeTeam.penalty1 = timer.homePen1;
-			homeTeam.penalty2 = timer.homePen2;
-			awayTeam.penalty1 = timer.awayPen1;
-			awayTeam.penalty2 = timer.awayPen2;
+		private void extractTimerFields(TimerEventArgs e) {
+			gameInfo.gameTime = e.gameClock;
+			homeTeam.penalty1 = e.homePen1;
+			homeTeam.penalty2 = e.homePen2;
+			awayTeam.penalty1 = e.awayPen1;
+			awayTeam.penalty2 = e.awayPen2;
 		}
 
-
+		private void setGameClockInformation() {
+			GameClockMinutes.Text = gameInfo.gameTime.Minutes.ToString();
+			string s = gameInfo.gameTime.Seconds.ToString();
+			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
+		}
 
 		//=================================================
 		// Home Team Methods

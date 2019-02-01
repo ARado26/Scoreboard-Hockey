@@ -66,40 +66,25 @@ namespace Scoreboard{
 					penaltyTime = new TimeSpan(0, mins, sec);
 					penaltyQueue.Enqueue(penaltyTime);
 				}
-			}			
-			// TEST
-			managePenalties();
-			// END TEST
+			}
 		}
 
 		public void clearPen1() {
 			penalty1 = new TimeSpan();
-			// TEST
-			managePenalties();
-			// END TEST
 		}
 
 		public void clearPen2() {
 			penalty2 = new TimeSpan();
-			// TEST
-			managePenalties();
-			// END TEST
 		}
 
 		public void setPen1(string minutesString, string secondsString) {
 			penalty1 = new TimeSpan();
 			queuePenalty(minutesString, secondsString);
-			// TEST
-			managePenalties();
-			// END TEST
 		}
 
 		public void setPen2(string minutesString, string secondsString) {
 			penalty2 = new TimeSpan();
 			queuePenalty(minutesString, secondsString);
-			// TEST
-			managePenalties();
-			// END TEST
 		}
 
 		public int getAmtOfQueuedPenalties() {

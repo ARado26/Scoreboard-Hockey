@@ -9,6 +9,22 @@ using System.Windows.Threading;
 
 namespace Scoreboard {
 	public class GameTimer {
+		
+
+		public TimeSpan gameClock { get; private set; }
+		public TimeSpan homePen1 { get; private set; }
+		public TimeSpan homePen2 { get; private set; }
+		public TimeSpan awayPen1 { get; private set; }
+		public TimeSpan awayPen2 { get; private set; }
+
+
+		public delegate void RefreshHandler(object sender, TimerEventArgs e);
+		public event RefreshHandler TimeStopped;
+		public event RefreshHandler Refresh;
+
+		public bool Running { get; private set; }
+
+
 		private Timer timer;
 		private int interval;
 
@@ -17,18 +33,11 @@ namespace Scoreboard {
 		private DateTime now;
 		private TimeSpan elapsedTime;
 
-		public TimeSpan gameClock { get; private set; }
-		public TimeSpan homePen1 { get; private set; }
-		public TimeSpan homePen2 { get; private set; }
-		public TimeSpan awayPen1 { get; private set; }
-		public TimeSpan awayPen2 { get; private set; }
-
-		public event EventHandler TimeExpired;
-
 		public GameTimer(int millisecondsInterval) {
 			interval = millisecondsInterval;
 			timer = new Timer(interval);
 			timer.Elapsed += adjustTimersHandler;
+			Running = false;
 		}
 		
 		public void startClock() {
@@ -36,19 +45,22 @@ namespace Scoreboard {
 			now = System.DateTime.Now;
 			timerStarted = now;
 			refreshStart = now;
+			Running = true;
 			timer.Start();
 		}
 
 		public void stopClock() {
 			timer.Stop();
+			Running = false;
 			adjustTimers();
 			Console.WriteLine("Stopping Clock: " + gameClock);
 			Console.WriteLine("Elapsed time: " + (System.DateTime.Now - timerStarted));
+			Console.WriteLine("Started at: " + (gameClock + (System.DateTime.Now - timerStarted)));
+			OnTimeStop();
 		}
 
 		public void setTimerFields(GameInfo game, HockeyTeam home, HockeyTeam away) {
 			gameClock = game.gameTime;
-			Console.WriteLine("GameTime:" + gameClock);
 			homePen1 = home.penalty1;
 			homePen2 = home.penalty2;
 			awayPen1 = away.penalty1;
@@ -95,24 +107,36 @@ namespace Scoreboard {
 		private void adjustTimersHandler(Object source, ElapsedEventArgs e) {
 			if (gameClock.TotalMilliseconds <= 0) {
 				stopClock();
-				OnTimeExpire(EventArgs.Empty);
 			}else {
 				adjustTimers();
+				OnRefresh();
 			}
 		}
-		
-		protected virtual void OnTimeExpire(EventArgs e) {
-			TimeExpired?.Invoke(this, e);
+
+		protected virtual void OnTimeStop() {
+			TimeStopped?.Invoke(this, new TimerEventArgs(this));
 		}
 
-		//private void addAdjustTimerHandlerValue(double time, string name) {
-		//	timer.Elapsed += (sender, e) => subtractElapsedFromTime(time, name);
-		//}
+		protected virtual void OnRefresh() {
+			Refresh?.Invoke(this, new TimerEventArgs(this));
+		}
 
-		//private void subtractElapsedFromTime(double time, string name) {
-		//	elapsedTime = (System.DateTime.Now - startTime).TotalMilliseconds;
-		//	time -= elapsedTime;
-		//	Console.WriteLine(name + ':' + time);
-		//}
+	}
+
+	public class TimerEventArgs : EventArgs {
+		public TimeSpan gameClock;
+		public TimeSpan homePen1;
+		public TimeSpan homePen2;
+		public TimeSpan awayPen1;
+		public TimeSpan awayPen2;
+
+		public TimerEventArgs(GameTimer t) {
+			gameClock = t.gameClock;
+			homePen1 = t.homePen1;
+			homePen2 = t.homePen2;
+			awayPen1 = t.awayPen1;
+			awayPen2 = t.awayPen2;
+		}
+
 	}
 }
