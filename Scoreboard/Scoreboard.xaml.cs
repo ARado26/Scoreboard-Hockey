@@ -81,7 +81,7 @@ namespace Scoreboard
 
 			setPenaltyInformation();
 		}
-
+			
 		public void printInfo() {
 			gameInfo.printInfo();
 			homeTeam.printInfo();
@@ -133,11 +133,11 @@ namespace Scoreboard
 			GameClockMinutes.Text = gameInfo.gameTime.Minutes.ToString();
 			string s = gameInfo.gameTime.Seconds.ToString();
 			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
-            DEBUG_LABEL.Text = "Setting Clock: " + GameClockMinutes.Text + ':' + GameClockSeconds.Text;
+			DEBUG_LABEL.Text = "Setting Clock: " + GameClockMinutes.Text + ':' + GameClockSeconds.Text;
 
-        }
+		}
 
-        private void GamePeriodPicker_SelectionChanged(object sender, SelectionChangedEventArgs e){
+		private void GamePeriodPicker_SelectionChanged(object sender, SelectionChangedEventArgs e){
 			string period = ((ComboBoxItem)GamePeriodPicker.SelectedItem).Content.ToString();
 			gameInfo.setPeriod(period);
 			GamePeriod.Text = period;
@@ -265,17 +265,21 @@ namespace Scoreboard
 		}
 
 		private void checkForDequeuedPenalties(TimerEventArgs e) {
-			if (!homeTeam.penalty1.Equals(e.homePen1)) {
+			if (!penaltiesEqualTolerant(homeTeam.penalty1,e.homePen1)) {
 				timer.enqueuePenalty("HOME", homeTeam.penalty1);
+				Console.WriteLine("H P1 Queued");
 			}
-			if (!homeTeam.penalty2.Equals(e.homePen2)) {
+			if (!penaltiesEqualTolerant(homeTeam.penalty2, e.homePen2)) {
 				timer.enqueuePenalty("HOME", homeTeam.penalty2);
+				Console.WriteLine("H P2 Queued");
 			}
-			if (!awayTeam.penalty1.Equals(e.awayPen1)) {
+			if (!penaltiesEqualTolerant(awayTeam.penalty1, e.awayPen1)) {
 				timer.enqueuePenalty("AWAY", awayTeam.penalty1);
+				Console.WriteLine("A P1 Queued");
 			}
-			if (!awayTeam.penalty2.Equals(e.awayPen2)) {
+			if (!penaltiesEqualTolerant(awayTeam.penalty2, e.awayPen2)) {
 				timer.enqueuePenalty("AWAY", awayTeam.penalty2);
+				Console.WriteLine("A P2 Queued");
 			}
 		}
 
@@ -283,6 +287,11 @@ namespace Scoreboard
 			GameClockMinutes.Text = gameInfo.gameTime.Minutes.ToString();
 			string s = gameInfo.gameTime.Seconds.ToString();
 			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
+		}
+
+		// small decimal differences inspire creation of phantom penalties
+		private bool penaltiesEqualTolerant(TimeSpan p1, TimeSpan p2) {
+			return (int)p1.TotalMilliseconds == (int)p2.TotalMilliseconds;
 		}
 
 		//=================================================
@@ -412,14 +421,14 @@ namespace Scoreboard
 
 		private void AwayPen1SetButton_Click(object sender, RoutedEventArgs e) {
 			TimeSpan queuedPenalty = formatPenalty(HomePenMinutes1.Text, HomePenSeconds1.Text);
-			awayTeam.setPen2(queuedPenalty);
+			awayTeam.setPen1(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting First Away Penalty";
 		}
 
 		private void AwayPen2SetButton_Click(object sender, RoutedEventArgs e) {
 			TimeSpan queuedPenalty = formatPenalty(HomePenMinutes2.Text, HomePenSeconds2.Text);
-			awayTeam.setPen1(queuedPenalty);
+			awayTeam.setPen2(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting Second Away Penalty";
 		}
