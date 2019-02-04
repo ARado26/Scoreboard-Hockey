@@ -116,7 +116,7 @@ namespace Scoreboard {
 
 		public void writeAwayTeamPlayerAdvantage(string penaltyInfo) {
 			if (penInfo != penaltyInfo) {
-				instructions.TryAdd(awayTeamNamePath, penaltyInfo);
+				instructions.TryAdd(awayTeamPlayerAdvantagePath, penaltyInfo);
 				penInfo = penaltyInfo;
 			}
 		}
