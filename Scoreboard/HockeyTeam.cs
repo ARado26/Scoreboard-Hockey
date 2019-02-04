@@ -86,10 +86,6 @@ namespace Scoreboard {
 			calculateAndSetActiveSkaters();
 		}
 
-		public bool hasPenalties() {
-			return penalty1.TotalMilliseconds != 0 || penalty2.TotalMilliseconds != 0;
-		}
-
 		public string logInfo() {
 			string info = "";
 			info += JsonConvert.SerializeObject(this);
