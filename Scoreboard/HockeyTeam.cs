@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections.Concurrent;
-using System.Threading;
+using Newtonsoft.Json;
 
-namespace Scoreboard{
+namespace Scoreboard {
 
 	public class HockeyTeam {
 
@@ -93,14 +90,10 @@ namespace Scoreboard{
 			return penalty1.TotalMilliseconds != 0 || penalty2.TotalMilliseconds != 0;
 		}
 
-		public void printInfo() {
-			Console.WriteLine("Team Name: " + name);
-			Console.WriteLine("\tScore: " + score);
-			Console.WriteLine("\tSkaters: " + activeSkaters);
-			Console.WriteLine("\tGoaliePulled: " + goaliePulled);
-			Console.WriteLine("\tPen1: " + penalty1);
-			Console.WriteLine("\tPen2: " + penalty2);
-			Console.WriteLine("\tPenQSize: " + penaltyQueue.Count);
+		public string logInfo() {
+			string info = "";
+			info += JsonConvert.SerializeObject(this);
+			return info;
 		}
 		
 		public void managePenalties() {

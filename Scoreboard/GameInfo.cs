@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
-namespace Scoreboard
-{
-    public class GameInfo
+namespace Scoreboard {
+	public class GameInfo
     {
 		public TimeSpan gameTime { get; set; }
 		public string period { get; set; }
@@ -25,9 +21,10 @@ namespace Scoreboard
 			period = prd;
 		}
 
-		public void printInfo() {
-			Console.WriteLine("GameTime: " + gameTime.ToString());
-			Console.WriteLine("Period: " + period);
+		public string logInfo() {
+			string info = "";
+			info += JsonConvert.SerializeObject(this);
+			return info;
 		}
 		
     }

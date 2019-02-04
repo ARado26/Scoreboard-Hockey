@@ -1,40 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.IO;
 using log4net;
 using System.Reflection;
 using log4net.Config;
+using Newtonsoft.Json;
 
-namespace Scoreboard
-{
+namespace Scoreboard {
 
 
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window
     {
 		public HockeyTeam homeTeam { get; set; }
 		public HockeyTeam awayTeam { get; set; }
 		public GameInfo gameInfo { get; set; }
-		public GameTimer timer { get; set; }
+		public enum CLOCK_STATES{ STOPPED, RUNNING }
+		public CLOCK_STATES clockState;
 
-		private enum CLOCK_STATES{ STOPPED, RUNNING }
-		private CLOCK_STATES clockState;
-
+		private GameTimer timer { get; set; }
 		private int refreshes = 0;
 		private const int REFRESH_INTERVAL = 10;
 
@@ -90,22 +77,23 @@ namespace Scoreboard
 			_log.Info("Initializing UI and Relevant Data");
 		}
 			
-		public void printInfo() {
-			gameInfo.printInfo();
-			homeTeam.printInfo();
-			awayTeam.printInfo();
-			Console.WriteLine("Clock Mode: " + clockState);
-			_log.Info("PrintInfo");
+		public void logInfo() {
+			string info = "";
+			info += gameInfo.logInfo();
+			info += homeTeam.logInfo();
+			info += awayTeam.logInfo();
+			info += "{\"clockState\":" + clockState.ToString() + "}";
+			_log.Debug(info);
 		}
 
-		public TimeSpan formatPenalty(string minutesString, string secondsString) {
+		public TimeSpan formatTimeSpan(string minutesString, string secondsString) {
 			TimeSpan penaltyTime = new TimeSpan();
 			if (int.TryParse(minutesString, out int mins)) {
 				if (int.TryParse(secondsString, out int sec)) {
 					penaltyTime = new TimeSpan(0, mins, sec);
 				}
 			}
-			_log.Info("FormatPenalty: IN> " + minutesString + ";" + secondsString + " OUT> " + penaltyTime);
+			_log.Debug("FormatPenalty: IN> " + minutesString + ":" + secondsString + " OUT> " + penaltyTime);
 			return penaltyTime;
 		}
 
@@ -122,9 +110,7 @@ namespace Scoreboard
 		// Game Info Methods
 		//=================================================
 
-		private void ClockToggleButton_Click(object sender, RoutedEventArgs e)
-        {
-			
+		private void ClockToggleButton_Click(object sender, RoutedEventArgs e){
 			
 			if (clockState == CLOCK_STATES.STOPPED) {
 				timer.setTimerFields(gameInfo, homeTeam, awayTeam);
@@ -140,19 +126,19 @@ namespace Scoreboard
 			}
 
 			DEBUG_LABEL.Text = "Toggle Clock Mode: " + clockState;
-			_log.Info(DEBUG_LABEL.Text);
+			_log.Debug(DEBUG_LABEL.Text);
         }
 
         private void ClockSetButton_Click(object sender, RoutedEventArgs e)
         {
 			string minutesString = GameClockMinutes.Text;
 			string secondsString = GameClockSeconds.Text;
-			gameInfo.setGameTime(formatPenalty(minutesString , secondsString));
+			gameInfo.setGameTime(formatTimeSpan(minutesString , secondsString));
 			GameClockMinutes.Text = gameInfo.gameTime.Minutes.ToString();
 			string s = gameInfo.gameTime.Seconds.ToString();
 			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
 			DEBUG_LABEL.Text = "Setting Clock: " + GameClockMinutes.Text + ':' + GameClockSeconds.Text;
-			_log.Info(DEBUG_LABEL.Text);
+			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		private void GamePeriodPicker_SelectionChanged(object sender, SelectionChangedEventArgs e){
@@ -160,13 +146,13 @@ namespace Scoreboard
 			gameInfo.setPeriod(period);
 			GamePeriod.Text = period;
 			DEBUG_LABEL.Text = "Period Set: " + GamePeriod.Text;
-			_log.Info(DEBUG_LABEL.Text);
+			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		private void GamePeriodSetter_Click(object sender, RoutedEventArgs e) {
 			gameInfo.setPeriod(GamePeriod.Text);
 			DEBUG_LABEL.Text = "Period Set: " + GamePeriod.Text;
-			_log.Info(DEBUG_LABEL.Text);
+			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		private void ResetAllButton_Click(object sender, RoutedEventArgs e) {
@@ -195,8 +181,8 @@ namespace Scoreboard
 				awayTeam.managePenalties();
 			});
 			checkForDequeuedPenalties(e);
-			if (++refreshes/100 != 0) {
-				printInfo();
+			if (++refreshes/1000 != 0) {
+				logInfo();
 				refreshes = 0;
 			}
 		}
@@ -330,7 +316,7 @@ namespace Scoreboard
 		private void HomeNameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 			homeTeam.name = HomeNameTextBox.Text;
 			DEBUG_LABEL.Text = "Home Team Name Changed: " + homeTeam.name;
-			_log.Info(DEBUG_LABEL.Text);
+			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		private void HomeSubGoalButton_Click(object sender, RoutedEventArgs e) {
@@ -351,7 +337,7 @@ namespace Scoreboard
 			homeTeam.setScore(HomeScore.Text);
 			HomeScore.Text = homeTeam.score.ToString();
 			DEBUG_LABEL.Text = "Set Home Score: " + HomeScore.Text;
-			_log.Info(DEBUG_LABEL.Text);
+			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		private void HomeGoaliePulled_Checked(object sender, RoutedEventArgs e) {
@@ -367,7 +353,7 @@ namespace Scoreboard
 		}
 
 		private void HomePenQueueButton_Click(object sender, RoutedEventArgs e) {
-			TimeSpan queuedPenalty = formatPenalty(HomePenMinutesQ.Text, HomePenSecondsQ.Text);
+			TimeSpan queuedPenalty = formatTimeSpan(HomePenMinutesQ.Text, HomePenSecondsQ.Text);
 			if (timer.Running) {
 				timer.enqueuePenalty("HOME", queuedPenalty);
 			}
@@ -380,7 +366,7 @@ namespace Scoreboard
 		}
 
 		private void HomePen1SetButton_Click(object sender, RoutedEventArgs e) {
-			TimeSpan queuedPenalty = formatPenalty(HomePenMinutes1.Text, HomePenSeconds1.Text);
+			TimeSpan queuedPenalty = formatTimeSpan(HomePenMinutes1.Text, HomePenSeconds1.Text);
 			homeTeam.setPen1(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting First Home Penalty";
@@ -388,7 +374,7 @@ namespace Scoreboard
 		}
 
 		private void HomePen2SetButton_Click(object sender, RoutedEventArgs e) {
-			TimeSpan queuedPenalty = formatPenalty(HomePenMinutes2.Text, HomePenSeconds2.Text);
+			TimeSpan queuedPenalty = formatTimeSpan(HomePenMinutes2.Text, HomePenSeconds2.Text);
 			homeTeam.setPen2(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting Second Home Penalty";
@@ -422,14 +408,14 @@ namespace Scoreboard
 		private void AwayNameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 			awayTeam.name = AwayNameTextBox.Text;
 			DEBUG_LABEL.Text = "Away Team Name Changed: " + awayTeam.name;
-			_log.Info(DEBUG_LABEL.Text);
+			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		private void AwaySubGoalButton_Click(object sender, RoutedEventArgs e) {
 			awayTeam.subtractGoal();
 			AwayScore.Text = awayTeam.score.ToString();
 			DEBUG_LABEL.Text = "Subtract Away Goal";
-			_log.Info(DEBUG_LABEL.Text);
+			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		private void AwayAddGoalButton_Click(object sender, RoutedEventArgs e) {
@@ -459,7 +445,7 @@ namespace Scoreboard
 		}
 
 		private void AwayPenQueueButton_Click(object sender, RoutedEventArgs e) {
-			TimeSpan queuedPenalty = formatPenalty(HomePenMinutesQ.Text, HomePenSecondsQ.Text);
+			TimeSpan queuedPenalty = formatTimeSpan(HomePenMinutesQ.Text, HomePenSecondsQ.Text);
 			if (timer.Running) {
 				timer.enqueuePenalty("AWAY", queuedPenalty);
 			}
@@ -472,7 +458,7 @@ namespace Scoreboard
 		}
 
 		private void AwayPen1SetButton_Click(object sender, RoutedEventArgs e) {
-			TimeSpan queuedPenalty = formatPenalty(AwayPenMinutes1.Text, AwayPenSeconds1.Text);
+			TimeSpan queuedPenalty = formatTimeSpan(AwayPenMinutes1.Text, AwayPenSeconds1.Text);
 			awayTeam.setPen1(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting First Away Penalty";
@@ -480,7 +466,7 @@ namespace Scoreboard
 		}
 
 		private void AwayPen2SetButton_Click(object sender, RoutedEventArgs e) {
-			TimeSpan queuedPenalty = formatPenalty(AwayPenMinutes2.Text, AwayPenSeconds2.Text);
+			TimeSpan queuedPenalty = formatTimeSpan(AwayPenMinutes2.Text, AwayPenSeconds2.Text);
 			awayTeam.setPen2(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting Second Away Penalty";
