@@ -17,17 +17,8 @@ namespace Scoreboard
 			period = "PG";
 		}
 
-		public void setGameTime(String minutesString, String secondsString) {
-			int totalSeconds = 0;
-			if (int.TryParse(minutesString, out int mins)) {
-				if (int.TryParse(secondsString, out int sec)) {
-					totalSeconds += sec;
-					totalSeconds += mins * 60;
-				}
-			}
-			int minutes = totalSeconds / 60;
-			int seconds = totalSeconds % 60;
-			gameTime = new TimeSpan(0, minutes, seconds);
+		public void setGameTime(TimeSpan time) {
+			gameTime = time;
 		}
 
 		public void setPeriod(string prd) {

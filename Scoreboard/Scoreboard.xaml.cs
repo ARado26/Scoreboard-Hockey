@@ -13,6 +13,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
+using log4net;
+using System.Reflection;
+using log4net.Config;
 
 namespace Scoreboard
 {
@@ -32,12 +36,13 @@ namespace Scoreboard
 		private CLOCK_STATES clockState;
 
 		private int refreshes = 0;
-
 		private const int REFRESH_INTERVAL = 10;
-		
-        public MainWindow()
-        {
 
+		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
+		public MainWindow()
+        {
+			XmlConfigurator.Configure();
 			initData();
             InitializeComponent();
 			initInterfaceAndRelatedData();
@@ -48,6 +53,7 @@ namespace Scoreboard
 			homeTeam = new HockeyTeam("HOME");
 			awayTeam = new HockeyTeam("AWAY");
 			timer = new GameTimer(REFRESH_INTERVAL);
+			_log.Info("Initializing Data");
 		}
 
 		public void initInterfaceAndRelatedData() {
@@ -80,6 +86,8 @@ namespace Scoreboard
 			DEBUG_LABEL.Text = "DEBUG";
 
 			setPenaltyInformation();
+
+			_log.Info("Initializing UI and Relevant Data");
 		}
 			
 		public void printInfo() {
@@ -87,6 +95,7 @@ namespace Scoreboard
 			homeTeam.printInfo();
 			awayTeam.printInfo();
 			Console.WriteLine("Clock Mode: " + clockState);
+			_log.Info("PrintInfo");
 		}
 
 		public TimeSpan formatPenalty(string minutesString, string secondsString) {
@@ -96,15 +105,17 @@ namespace Scoreboard
 					penaltyTime = new TimeSpan(0, mins, sec);
 				}
 			}
+			_log.Info("FormatPenalty: IN> " + minutesString + ";" + secondsString + " OUT> " + penaltyTime);
 			return penaltyTime;
 		}
 
 		private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			Keyboard.ClearFocus();
+			_log.Info("ClearFocus");
 		}
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
-			
+			_log.Info("Exiting");
 		}
 
 		//=================================================
@@ -121,24 +132,27 @@ namespace Scoreboard
 				clockState = CLOCK_STATES.RUNNING;
 				toggleClockButtonText();
 				toggleClockTextBoxElements();
+				_log.Info("StartClock");
 			}
 			else {
 				timer.stopClock();
+				_log.Info("StopClock");
 			}
 
 			DEBUG_LABEL.Text = "Toggle Clock Mode: " + clockState;
+			_log.Info(DEBUG_LABEL.Text);
         }
 
         private void ClockSetButton_Click(object sender, RoutedEventArgs e)
         {
 			string minutesString = GameClockMinutes.Text;
 			string secondsString = GameClockSeconds.Text;
-			gameInfo.setGameTime(minutesString, secondsString);
+			gameInfo.setGameTime(formatPenalty(minutesString , secondsString));
 			GameClockMinutes.Text = gameInfo.gameTime.Minutes.ToString();
 			string s = gameInfo.gameTime.Seconds.ToString();
 			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
 			DEBUG_LABEL.Text = "Setting Clock: " + GameClockMinutes.Text + ':' + GameClockSeconds.Text;
-
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void GamePeriodPicker_SelectionChanged(object sender, SelectionChangedEventArgs e){
@@ -146,15 +160,18 @@ namespace Scoreboard
 			gameInfo.setPeriod(period);
 			GamePeriod.Text = period;
 			DEBUG_LABEL.Text = "Period Set: " + GamePeriod.Text;
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void GamePeriodSetter_Click(object sender, RoutedEventArgs e) {
 			gameInfo.setPeriod(GamePeriod.Text);
 			DEBUG_LABEL.Text = "Period Set: " + GamePeriod.Text;
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void ResetAllButton_Click(object sender, RoutedEventArgs e) {
 			DEBUG_LABEL.Text = "Reset All Fields";
+			_log.Info(DEBUG_LABEL.Text);
 			initData();
 			initInterfaceAndRelatedData();
 		}
@@ -166,6 +183,7 @@ namespace Scoreboard
 				toggleClockButtonText();
 				toggleClockTextBoxElements();
 			});
+			_log.Info("Time Stoppage");
 		}
 
 		private void HandleRefresh(Object sender, TimerEventArgs e) {
@@ -276,19 +294,19 @@ namespace Scoreboard
 		private void checkForDequeuedPenalties(TimerEventArgs e) {
 			if (!penaltiesEqualTolerant(homeTeam.penalty1,e.homePen1)) {
 				timer.enqueuePenalty("HOME", homeTeam.penalty1);
-				Console.WriteLine("H P1 Queued");
+				_log.Info("H P1 Queued");
 			}
 			if (!penaltiesEqualTolerant(homeTeam.penalty2, e.homePen2)) {
 				timer.enqueuePenalty("HOME", homeTeam.penalty2);
-				Console.WriteLine("H P2 Queued");
+				_log.Info("H P2 Queued");
 			}
 			if (!penaltiesEqualTolerant(awayTeam.penalty1, e.awayPen1)) {
 				timer.enqueuePenalty("AWAY", awayTeam.penalty1);
-				Console.WriteLine("A P1 Queued");
+				_log.Info("A P1 Queued");
 			}
 			if (!penaltiesEqualTolerant(awayTeam.penalty2, e.awayPen2)) {
 				timer.enqueuePenalty("AWAY", awayTeam.penalty2);
-				Console.WriteLine("A P2 Queued");
+				_log.Info("A P2 Queued");
 			}
 		}
 
@@ -311,35 +329,41 @@ namespace Scoreboard
 
 		private void HomeNameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 			homeTeam.name = HomeNameTextBox.Text;
-			DEBUG_LABEL.Text = "Home Team Name Changed";
+			DEBUG_LABEL.Text = "Home Team Name Changed: " + homeTeam.name;
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void HomeSubGoalButton_Click(object sender, RoutedEventArgs e) {
 			homeTeam.subtractGoal();
 			HomeScore.Text = homeTeam.score.ToString();
 			DEBUG_LABEL.Text = "Subtract Home Goal";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void HomeAddGoalButton_Click(object sender, RoutedEventArgs e) {
 			homeTeam.addGoal();
 			HomeScore.Text = homeTeam.score.ToString();
 			DEBUG_LABEL.Text = "Add Home Goal";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void HomeScore_TextChanged(object sender, TextChangedEventArgs e) {
 			homeTeam.setScore(HomeScore.Text);
 			HomeScore.Text = homeTeam.score.ToString();
 			DEBUG_LABEL.Text = "Set Home Score: " + HomeScore.Text;
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void HomeGoaliePulled_Checked(object sender, RoutedEventArgs e) {
 			homeTeam.toggleGoaliePulled();
 			DEBUG_LABEL.Text = "Home Goalie Pulled";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void HomeGoaliePulled_Unchecked(object sender, RoutedEventArgs e) {
 			homeTeam.toggleGoaliePulled();
 			DEBUG_LABEL.Text = "Home Goalie In Net";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void HomePenQueueButton_Click(object sender, RoutedEventArgs e) {
@@ -352,6 +376,7 @@ namespace Scoreboard
 			}
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Queueing Home Penalty";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void HomePen1SetButton_Click(object sender, RoutedEventArgs e) {
@@ -359,6 +384,7 @@ namespace Scoreboard
 			homeTeam.setPen1(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting First Home Penalty";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void HomePen2SetButton_Click(object sender, RoutedEventArgs e) {
@@ -366,6 +392,7 @@ namespace Scoreboard
 			homeTeam.setPen2(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting Second Home Penalty";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void HomePen1ClearButton_Click(object sender, RoutedEventArgs e) {
@@ -375,6 +402,7 @@ namespace Scoreboard
 			homeTeam.clearPen1();
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Clearing First Home Penalty";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void HomePen2ClearButton_Click(object sender, RoutedEventArgs e) {
@@ -384,6 +412,7 @@ namespace Scoreboard
 			homeTeam.clearPen2();
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Clearing Second Home Penalty";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		//=================================================
@@ -392,35 +421,41 @@ namespace Scoreboard
 
 		private void AwayNameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 			awayTeam.name = AwayNameTextBox.Text;
-			DEBUG_LABEL.Text = "Away Team Name Changed";
+			DEBUG_LABEL.Text = "Away Team Name Changed: " + awayTeam.name;
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void AwaySubGoalButton_Click(object sender, RoutedEventArgs e) {
 			awayTeam.subtractGoal();
 			AwayScore.Text = awayTeam.score.ToString();
 			DEBUG_LABEL.Text = "Subtract Away Goal";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void AwayAddGoalButton_Click(object sender, RoutedEventArgs e) {
 			awayTeam.addGoal();
 			AwayScore.Text = awayTeam.score.ToString();
 			DEBUG_LABEL.Text = "Add Away Goal";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void AwayScore_TextChanged(object sender, TextChangedEventArgs e) {
 			awayTeam.setScore(AwayScore.Text);
 			AwayScore.Text = awayTeam.score.ToString();
 			DEBUG_LABEL.Text = "Set Away Score: " + HomeScore.Text;
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void AwayGoaliePulled_Checked(object sender, RoutedEventArgs e) {
 			awayTeam.toggleGoaliePulled();
 			DEBUG_LABEL.Text = "Away Goalie Pulled";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void AwayGoaliePulled_Unchecked(object sender, RoutedEventArgs e) {
 			awayTeam.toggleGoaliePulled();
 			DEBUG_LABEL.Text = "Away Goalie In Net";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void AwayPenQueueButton_Click(object sender, RoutedEventArgs e) {
@@ -433,6 +468,7 @@ namespace Scoreboard
 			}
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Queueing Away Penalty";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void AwayPen1SetButton_Click(object sender, RoutedEventArgs e) {
@@ -440,6 +476,7 @@ namespace Scoreboard
 			awayTeam.setPen1(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting First Away Penalty";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void AwayPen2SetButton_Click(object sender, RoutedEventArgs e) {
@@ -447,6 +484,7 @@ namespace Scoreboard
 			awayTeam.setPen2(queuedPenalty);
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Setting Second Away Penalty";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void AwayPen1ClearButton_Click(object sender, RoutedEventArgs e) {
@@ -457,6 +495,7 @@ namespace Scoreboard
 
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Clearing First Away Penalty";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void AwayPen2ClearButton_Click(object sender, RoutedEventArgs e) {
@@ -466,6 +505,7 @@ namespace Scoreboard
 			awayTeam.clearPen2();
 			setPenaltyInformation();
 			DEBUG_LABEL.Text = "Clearing Second Away Penalty";
+			_log.Info(DEBUG_LABEL.Text);
 		}
 
 	}
