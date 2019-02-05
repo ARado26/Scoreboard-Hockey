@@ -54,11 +54,21 @@ namespace Scoreboard.Tests {
 			home.toggleGoaliePulled();
 			string t = PenaltyAndTimeCalculator.calculatePlayerAdvantage(home, away);
 			Assert.AreEqual("Empty Net", t);
+			home.toggleGoaliePulled();
 
 			away.setPen1(new TimeSpan(0, 2, 0));
 			away.managePenalties();
 			t = PenaltyAndTimeCalculator.calculatePlayerAdvantage(home, away);
-			Assert.AreEqual("6 On 4", t);
+			Assert.AreEqual("PP", t);
+
+			away.setPen2(new TimeSpan(0, 2, 0));
+			away.managePenalties();
+			t = PenaltyAndTimeCalculator.calculatePlayerAdvantage(home, away);
+			Assert.AreEqual("5 on 3", t);
+
+			home.toggleGoaliePulled();
+			t = PenaltyAndTimeCalculator.calculatePlayerAdvantage(home, away);
+			Assert.AreEqual("6 on 3", t);
 		}
 
 		[TestMethod()]

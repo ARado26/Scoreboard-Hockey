@@ -32,9 +32,12 @@ namespace Scoreboard {
 			if (max == 6 && min == 5) {
 				advantage = "Empty Net";
 			}
+			else if (max == 5 && min == 4) {
+				advantage = "PP";
+			}
 			else {
 				advantage += max.ToString();
-				advantage += " On ";
+				advantage += " on ";
 				advantage += min.ToString();
 			}
 			return advantage;

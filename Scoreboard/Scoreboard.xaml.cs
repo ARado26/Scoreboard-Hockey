@@ -108,6 +108,7 @@ namespace Scoreboard {
 		}
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+			timer.Dispose();
 			_log.Info("Exiting");
 		}
 

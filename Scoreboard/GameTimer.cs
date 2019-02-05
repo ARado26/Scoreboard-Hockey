@@ -3,7 +3,7 @@ using System.Timers;
 using System.Collections.Concurrent;
 
 namespace Scoreboard {
-	public class GameTimer {
+	public class GameTimer : IDisposable {
 		
 
 		public TimeSpan gameClock { get; private set; }
@@ -23,7 +23,7 @@ namespace Scoreboard {
 
 		
 		private Timer timer;
-		private int interval;
+		private readonly int interval;
 
 		private DateTime refreshStart;
 		private DateTime timerStarted;
@@ -38,7 +38,11 @@ namespace Scoreboard {
 			timer.Elapsed += adjustTimersHandler;
 			Running = false;
 		}
-		
+
+		~GameTimer() {
+			Dispose(false);
+		}
+
 		public void startClock() {
 			//Console.WriteLine("Starting Clock: " + gameClock);
 			now = System.DateTime.Now;
@@ -74,6 +78,10 @@ namespace Scoreboard {
 			clearQueue.Enqueue(penaltyName);
 		}
 
+		public void Dispose() {
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
 		private void adjustTimers() {
 			now = System.DateTime.Now;
@@ -163,7 +171,15 @@ namespace Scoreboard {
 		protected virtual void OnRefresh() {
 			Refresh?.Invoke(this, new TimerEventArgs(this));
 		}
-
+		
+		protected virtual void Dispose(bool disposing) {
+			if (disposing) {
+				if (timer != null) {
+					timer.Dispose();
+					timer = null;
+				}
+			}
+		}
 	}
 
 	public class TimerEventArgs : EventArgs {
