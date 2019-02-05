@@ -9,12 +9,10 @@
         Height="600"
         Width="950"
         Background="LightGray" 
-		MinWidth="950" 
-		MinHeight="550" 
 		ResizeMode="NoResize" 
-		Topmost="True"
 		MouseDoubleClick="Window_MouseDoubleClick"
 		Closing="Window_Closing"
+		Topmost="False"
 		>
     <Grid x:Name="MainGrid" VerticalAlignment="Center" >
         <Grid.ColumnDefinitions>

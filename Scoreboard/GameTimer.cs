@@ -40,7 +40,7 @@ namespace Scoreboard {
 		}
 		
 		public void startClock() {
-			Console.WriteLine("Starting Clock: " + gameClock);
+			//Console.WriteLine("Starting Clock: " + gameClock);
 			now = System.DateTime.Now;
 			timerStarted = now;
 			refreshStart = now;
@@ -52,9 +52,9 @@ namespace Scoreboard {
 			timer.Stop();
 			Running = false;
 			adjustTimers();
-			Console.WriteLine("Stopping Clock: " + gameClock);
-			Console.WriteLine("Elapsed time: " + (System.DateTime.Now - timerStarted));
-			Console.WriteLine("Started at: " + (gameClock + (System.DateTime.Now - timerStarted)));
+			//Console.WriteLine("Stopping Clock: " + gameClock);
+			//Console.WriteLine("Elapsed time: " + (System.DateTime.Now - timerStarted));
+			//Console.WriteLine("Started at: " + (gameClock + (System.DateTime.Now - timerStarted)));
 			OnTimeStop();
 		}
 

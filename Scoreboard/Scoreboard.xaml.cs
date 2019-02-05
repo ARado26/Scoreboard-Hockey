@@ -102,8 +102,9 @@ namespace Scoreboard {
 		}
 
 		private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			Keyboard.ClearFocus();
-			_log.Info("ClearFocus");
+			ClockToggleButton.Focus();
+			DEBUG_LABEL.Text = "Press ENTER to toggle clock";
+			_log.Info("Clock Toggle Focus");
 		}
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -115,22 +116,7 @@ namespace Scoreboard {
 		//=================================================
 
 		private void ClockToggleButton_Click(object sender, RoutedEventArgs e){
-			
-			if (clockState == CLOCK_STATES.STOPPED) {
-				timer.setTimerFields(gameInfo, homeTeam, awayTeam);
-				timer.startClock();
-				clockState = CLOCK_STATES.RUNNING;
-				toggleClockButtonText();
-				toggleClockTextBoxElements();
-				_log.Info("StartClock");
-			}
-			else {
-				timer.stopClock();
-				_log.Info("StopClock");
-			}
-
-			DEBUG_LABEL.Text = "Toggle Clock Mode: " + clockState;
-			_log.Debug(DEBUG_LABEL.Text);
+			toggleClock();
         }
 
         private void ClockSetButton_Click(object sender, RoutedEventArgs e){
@@ -339,6 +325,24 @@ namespace Scoreboard {
 			GameClockMinutes.Text = gameInfo.gameTime.Minutes.ToString();
 			string s = gameInfo.gameTime.Seconds.ToString();
 			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
+		}
+
+		private void toggleClock() {
+			if (clockState == CLOCK_STATES.STOPPED) {
+				timer.setTimerFields(gameInfo, homeTeam, awayTeam);
+				timer.startClock();
+				clockState = CLOCK_STATES.RUNNING;
+				toggleClockButtonText();
+				toggleClockTextBoxElements();
+				_log.Info("StartClock");
+			}
+			else {
+				timer.stopClock();
+				_log.Info("StopClock");
+			}
+
+			DEBUG_LABEL.Text = "Toggle Clock Mode: " + clockState;
+			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		// small decimal differences inspire creation of phantom penalties

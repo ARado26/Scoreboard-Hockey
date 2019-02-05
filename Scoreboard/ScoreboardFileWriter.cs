@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Scoreboard {
 	public class ScoreboardFileWriter {
@@ -47,21 +48,52 @@ namespace Scoreboard {
 			awayTeamScorePath = Path.Combine(path, "AwayScore.txt");
 			awayTeamPlayerAdvantagePath = Path.Combine(path, "AwayAdvantage.txt");
 
+			List<string> paths = new List<string> {
+				gameClockPath,
+				periodPath,
+				evenStrengthPath,
+				homeTeamNamePath,
+				homeTeamScorePath,
+				homeTeamPlayerAdvantagePath,
+				awayTeamNamePath,
+				awayTeamScorePath,
+				awayTeamPlayerAdvantagePath,
+			};
+			foreach(string path in paths) {
+				if (!File.Exists(path)) {
+					FileStream f = File.Create(path);
+					f.Close();
+				}
+			}
+
 			gameClock = File.ReadAllText(gameClockPath);
 			prd = File.ReadAllText(periodPath);
 			evenPenaltyInfo = "CLEAR";
 			homeName = File.ReadAllText(homeTeamNamePath);
-			homeScore = int.Parse(File.ReadAllText(homeTeamScorePath));
 			homePenaltyInfo = "CLEAR";
 			awayName = File.ReadAllText(awayTeamNamePath);
-			awayScore = int.Parse(File.ReadAllText(homeTeamScorePath));
 			awayPenaltyInfo = "CLEAR";
+
+			if (int.TryParse(File.ReadAllText(homeTeamScorePath), out int i)) {
+				homeScore = i;
+			}
+			else {
+				homeScore = 0;
+			}
+
+			if (int.TryParse(File.ReadAllText(awayTeamScorePath), out i)) {
+				awayScore = i;
+			}
+			else {
+				awayScore = 0;
+			}
+
 		}
 
 		public void publishTimers() {
 			foreach(string key in instructions.Keys) {
 				if(instructions.TryRemove(key, out string val)) {
-					Console.WriteLine(key + ":" + val);
+					//Console.WriteLine(key + ":" + val);
 					File.WriteAllText(key, val);
 				}
 			}
