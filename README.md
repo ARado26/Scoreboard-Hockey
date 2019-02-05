@@ -1,6 +1,6 @@
 ﻿# Scoreboard-Hockey
 
-# Scoreboard v1.0.0.0
+## Scoreboard v1.0.0.0
 
 Scoreboard is designed to be used in tandem with OBS or other streaming software to display game information for an ice hockey game. This version of scoreboard writes text files for the streaming software to read then display.
 
