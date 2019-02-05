@@ -179,18 +179,15 @@ namespace Scoreboard {
 		}
 
 		private void HandleRefresh(Object sender, TimerEventArgs e) {
-			extractTimerFields(e);
 			this.Dispatcher.InvokeAsync(() => {
+				extractTimerFields(e);
 				setGameClockInformation();
 				setPenaltyInformation();
 				homeTeam.managePenalties();
 				awayTeam.managePenalties();
-			});
-			checkForDequeuedPenalties(e);
-			if (++refreshes / 20 != 0) {
+				checkForDequeuedPenalties(e);
 				calculateAndWriteTimers();
-				writer.publishTimers();
-			}
+			});
 			if (++refreshes/1000 != 0) {
 				logInfo();
 				refreshes = 0;
@@ -308,28 +305,34 @@ namespace Scoreboard {
 
 		private void calculateAndWriteTimers() {
 			writer.writeGameClock(PenaltyAndTimeCalculator.timeSpanToPenaltyString(gameInfo.gameTime));
-			if (homeTeam.activeSkaters != 5 || awayTeam.activeSkaters != 5) {
-				string teamWithAdvantage = PenaltyAndTimeCalculator.calculateTeamWithAdvantage(homeTeam, awayTeam);
-				string status = PenaltyAndTimeCalculator.calculatePlayerAdvantage(homeTeam, awayTeam);
-				string time = PenaltyAndTimeCalculator.calculateTimeToDisplay(homeTeam, awayTeam);
-				status = status + " " + time;
-				switch (teamWithAdvantage) {
-					case "NONE":
+			string teamWithAdvantage = PenaltyAndTimeCalculator.calculateTeamWithAdvantage(homeTeam, awayTeam);
+			string status = PenaltyAndTimeCalculator.calculatePlayerAdvantage(homeTeam, awayTeam);
+			string time = PenaltyAndTimeCalculator.calculateTimeToDisplay(homeTeam, awayTeam);
+			status = status + " " + time;
+			switch (teamWithAdvantage) {
+				case "NONE":
+					if (homeTeam.activeSkaters == 5 && awayTeam.activeSkaters == 5) {
+						writer.writeEvenStrengthPenaltyInfo("");
+					}
+					else {
 						writer.writeEvenStrengthPenaltyInfo(status);
-						break;
-					case "HOME":
-						writer.writeHomeTeamPlayerAdvantage(status);
-						break;
-					case "AWAY":
-						writer.writeAwayTeamPlayerAdvantage(status);
-						break;
-				}
+					}
+					writer.writeHomeTeamPlayerAdvantage("");
+					writer.writeAwayTeamPlayerAdvantage("");
+					break;
+				case "HOME":
+					writer.writeEvenStrengthPenaltyInfo("");
+					writer.writeHomeTeamPlayerAdvantage(status);
+					writer.writeAwayTeamPlayerAdvantage("");
+					break;
+				case "AWAY":
+					writer.writeEvenStrengthPenaltyInfo("");
+					writer.writeHomeTeamPlayerAdvantage("");
+					writer.writeAwayTeamPlayerAdvantage(status);
+					break;
+
 			}
-			else {
-				writer.writeEvenStrengthPenaltyInfo("");
-				writer.writeHomeTeamPlayerAdvantage("");
-				writer.writeAwayTeamPlayerAdvantage("");
-			}
+			writer.publishTimers();
 		}
 
 		private void setGameClockInformation() {

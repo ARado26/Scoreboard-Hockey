@@ -21,11 +21,13 @@ namespace Scoreboard {
 
 		private string gameClock;
 		private string prd;
-		private string penInfo;
+		private string evenPenaltyInfo;
 		private string homeName;
 		private int homeScore;
+		private string homePenaltyInfo;
 		private string awayName;
 		private int awayScore;
+		private string awayPenaltyInfo;
 
 		public ScoreboardFileWriter(string filepath) {
 			path = filepath;
@@ -44,11 +46,22 @@ namespace Scoreboard {
 			awayTeamNamePath = Path.Combine(path, "AwayName.txt");
 			awayTeamScorePath = Path.Combine(path, "AwayScore.txt");
 			awayTeamPlayerAdvantagePath = Path.Combine(path, "AwayAdvantage.txt");
+
+			gameClock = File.ReadAllText(gameClockPath);
+			prd = File.ReadAllText(periodPath);
+			evenPenaltyInfo = "CLEAR";
+			homeName = File.ReadAllText(homeTeamNamePath);
+			homeScore = int.Parse(File.ReadAllText(homeTeamScorePath));
+			homePenaltyInfo = "CLEAR";
+			awayName = File.ReadAllText(awayTeamNamePath);
+			awayScore = int.Parse(File.ReadAllText(homeTeamScorePath));
+			awayPenaltyInfo = "CLEAR";
 		}
 
 		public void publishTimers() {
 			foreach(string key in instructions.Keys) {
 				if(instructions.TryRemove(key, out string val)) {
+					Console.WriteLine(key + ":" + val);
 					File.WriteAllText(key, val);
 				}
 			}
@@ -70,9 +83,9 @@ namespace Scoreboard {
 		}
 
 		public void writeEvenStrengthPenaltyInfo(string penaltyInfo) {
-			if (penInfo != penaltyInfo) {
+			if (evenPenaltyInfo != penaltyInfo) {
 				instructions.TryAdd(evenStrengthPath, penaltyInfo);
-				penInfo = penaltyInfo;
+				evenPenaltyInfo = penaltyInfo;
 			}
 		}
 
@@ -93,9 +106,9 @@ namespace Scoreboard {
 		}
 
 		public void writeHomeTeamPlayerAdvantage(string penaltyInfo) {
-			if (penInfo != penaltyInfo) {
+			if (homePenaltyInfo != penaltyInfo) {
 				instructions.TryAdd(homeTeamPlayerAdvantagePath, penaltyInfo);
-				penInfo = penaltyInfo;
+				homePenaltyInfo = penaltyInfo;
 			}
 		}
 
@@ -115,9 +128,9 @@ namespace Scoreboard {
 		}
 
 		public void writeAwayTeamPlayerAdvantage(string penaltyInfo) {
-			if (penInfo != penaltyInfo) {
+			if (awayPenaltyInfo != penaltyInfo) {
 				instructions.TryAdd(awayTeamPlayerAdvantagePath, penaltyInfo);
-				penInfo = penaltyInfo;
+				awayPenaltyInfo = penaltyInfo;
 			}
 		}
 	}

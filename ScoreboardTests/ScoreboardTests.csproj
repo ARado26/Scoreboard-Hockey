@@ -57,6 +57,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="GameInfoTests.cs" />
+    <Compile Include="GameTimerTests.cs" />
     <Compile Include="HockeyTeamTests.cs" />
     <Compile Include="PenaltyAndTimeCalculatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

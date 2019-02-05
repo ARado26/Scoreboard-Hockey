@@ -48,8 +48,15 @@ namespace Scoreboard {
 				away.penalty2
 			};
 			penalties.RemoveAll(isZeroTimeSpan);
-			TimeSpan minimum = penalties.Min();
-			string displayTime = timeSpanToPenaltyString(minimum);
+			string displayTime;
+			if (penalties.Count > 0) {
+				TimeSpan minimum = penalties.Min();
+				displayTime = timeSpanToPenaltyString(minimum);
+			}
+			else {
+				displayTime = "";
+			}
+			
 			return displayTime;
 		}
 
