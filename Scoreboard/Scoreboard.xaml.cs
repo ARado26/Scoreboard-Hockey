@@ -5,9 +5,13 @@ using System.Windows.Input;
 using log4net;
 using System.Reflection;
 using log4net.Config;
+using Microsoft.Win32;
+using System.IO;
+using System.Windows.Media.Imaging;
+
 
 namespace Scoreboard {
-
+	using calculator = PenaltyAndTimeCalculator;
 
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
@@ -28,6 +32,7 @@ namespace Scoreboard {
 		private const int REFRESH_INTERVAL = 10;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		
 
 		public MainWindow()
         {
@@ -79,6 +84,9 @@ namespace Scoreboard {
 			banner.Show();
 			banner.Activate();
 
+			HomeImage.Source = banner.HomeBackground.Source;
+			AwayImage.Source = banner.AwayBackground.Source;
+
 			_log.Info("Initializing UI and Relevant Data");
 		}
 			
@@ -126,7 +134,7 @@ namespace Scoreboard {
 			string minutesString = GameClockMinutes.Text;
 			string secondsString = GameClockSeconds.Text;
 			gameInfo.setGameTime(formatTimeSpan(minutesString , secondsString));
-			calculateAndWriteTimers();
+			calculateAndSetTimers();
 			GameClockMinutes.Text = gameInfo.gameTime.Minutes.ToString();
 			string s = gameInfo.gameTime.Seconds.ToString();
 			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
@@ -175,7 +183,7 @@ namespace Scoreboard {
 				homeTeam.managePenalties();
 				awayTeam.managePenalties();
 				checkForDequeuedPenalties(e);
-				calculateAndWriteTimers();
+				calculateAndSetTimers();
 			});
 			if (++refreshes/1000 != 0) {
 				logInfo();
@@ -292,32 +300,33 @@ namespace Scoreboard {
 			}
 		}
 
-		private void calculateAndWriteTimers() {
-			banner.setTime(PenaltyAndTimeCalculator.timeSpanToTimeString(gameInfo.gameTime));
-			string teamWithAdvantage = PenaltyAndTimeCalculator.calculateTeamWithAdvantage(homeTeam, awayTeam);
-			string status = PenaltyAndTimeCalculator.calculatePlayerAdvantage(homeTeam, awayTeam);
-			string time = PenaltyAndTimeCalculator.calculateTimeToDisplay(homeTeam, awayTeam);
-			status = status + " " + time;
+		private void calculateAndSetTimers() {
+			banner.setTime(gameInfo.getFormattedGameTime());
+			string teamWithAdvantage = calculator.calculateTeamWithAdvantage(homeTeam, awayTeam);
+			string time = calculator.calculateTimeToDisplay(homeTeam, awayTeam);
+			string homeStatus = calculator.calculatePlayerAdvantage(homeTeam, awayTeam);
+			string awayStatus = calculator.calculatePlayerAdvantage(awayTeam, homeTeam);
 			switch (teamWithAdvantage) {
 				case "NONE":
-					if (homeTeam.activeSkaters == 5 && awayTeam.activeSkaters == 5) {
-						banner.setEvenStrength("");
+					string status = calculator.calculateEvenStrength(homeTeam, awayTeam);
+					if(status != "") {
+						banner.setEvenStrength(status + " " + time);
 					}
 					else {
 						banner.setEvenStrength(status);
 					}
-					banner.setHomeAdvantage("");
-					banner.setAwayAdvantage("");
+					banner.setHomeAdvantage(homeStatus);
+					banner.setAwayAdvantage(awayStatus);
 					break;
 				case "HOME":
 					banner.setEvenStrength("");
-					banner.setHomeAdvantage(status);
-					banner.setAwayAdvantage("");
+					banner.setHomeAdvantage(homeStatus + " " + time);
+					banner.setAwayAdvantage(awayStatus);
 					break;
 				case "AWAY":
 					banner.setEvenStrength("");
-					banner.setHomeAdvantage("");
-					banner.setAwayAdvantage(status);
+					banner.setHomeAdvantage(homeStatus);
+					banner.setAwayAdvantage(awayStatus + " " + time);
 					break;
 			}
 		}
@@ -390,12 +399,14 @@ namespace Scoreboard {
 
 		private void HomeGoaliePulled_Checked(object sender, RoutedEventArgs e) {
 			homeTeam.toggleGoaliePulled();
+			calculateAndSetTimers();
 			DEBUG_LABEL.Text = "Home Goalie Pulled";
 			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void HomeGoaliePulled_Unchecked(object sender, RoutedEventArgs e) {
 			homeTeam.toggleGoaliePulled();
+			calculateAndSetTimers();
 			DEBUG_LABEL.Text = "Home Goalie In Net";
 			_log.Info(DEBUG_LABEL.Text);
 		}
@@ -409,7 +420,7 @@ namespace Scoreboard {
 				homeTeam.queuePenalty(queuedPenalty);
 			}
 			setPenaltyInformation();
-			calculateAndWriteTimers();
+			calculateAndSetTimers();
 			DEBUG_LABEL.Text = "Queueing Home Penalty";
 			_log.Info(DEBUG_LABEL.Text);
 		}
@@ -418,7 +429,7 @@ namespace Scoreboard {
 			TimeSpan queuedPenalty = formatTimeSpan(HomePenMinutes1.Text, HomePenSeconds1.Text);
 			homeTeam.setPen1(queuedPenalty);
 			setPenaltyInformation();
-			calculateAndWriteTimers();
+			calculateAndSetTimers();
 			DEBUG_LABEL.Text = "Setting First Home Penalty";
 			_log.Info(DEBUG_LABEL.Text);
 		}
@@ -427,7 +438,7 @@ namespace Scoreboard {
 			TimeSpan queuedPenalty = formatTimeSpan(HomePenMinutes2.Text, HomePenSeconds2.Text);
 			homeTeam.setPen2(queuedPenalty);
 			setPenaltyInformation();
-			calculateAndWriteTimers();
+			calculateAndSetTimers();
 			DEBUG_LABEL.Text = "Setting Second Home Penalty";
 			_log.Info(DEBUG_LABEL.Text);
 		}
@@ -439,7 +450,7 @@ namespace Scoreboard {
 			homeTeam.clearPen1();
 			setPenaltyInformation();
 			if (!timer.Running) {
-				calculateAndWriteTimers();
+				calculateAndSetTimers();
 			}
 			DEBUG_LABEL.Text = "Clearing First Home Penalty";
 			_log.Info(DEBUG_LABEL.Text);
@@ -452,10 +463,32 @@ namespace Scoreboard {
 			homeTeam.clearPen2();
 			setPenaltyInformation();
 			if (!timer.Running) {
-				calculateAndWriteTimers();
+				calculateAndSetTimers();
 			}
 			DEBUG_LABEL.Text = "Clearing Second Home Penalty";
 			_log.Info(DEBUG_LABEL.Text);
+		}
+
+		private void HomeImageButton_Click(object sender, RoutedEventArgs e) {
+			OpenFileDialog dlg = new OpenFileDialog();
+			dlg.Filter = "Image Files(*PNG;*.BMP;*.JPG;*.GIF)|*PNG;*.BMP;*.JPG;*.GIF|All files (*.*)|*.*"; 
+
+			Nullable<bool> result = dlg.ShowDialog();
+
+			if (result == true) {
+				string filename = dlg.FileName;
+				Uri uriPath = new Uri(filename);
+				BitmapImage bmp = new BitmapImage(uriPath);
+				if (bmp.PixelWidth==800 && bmp.PixelHeight == 160) {
+					HomeImage.Source = bmp;
+					banner.HomeBackground.Source = bmp;
+					DEBUG_LABEL.Text = "New Home Image: " + Path.GetFileName(filename);
+				}
+				else {
+					DEBUG_LABEL.Text = "Selected File Does not have compatible dimensions";
+				}
+				
+			}
 		}
 
 		//=================================================
@@ -495,12 +528,14 @@ namespace Scoreboard {
 
 		private void AwayGoaliePulled_Checked(object sender, RoutedEventArgs e) {
 			awayTeam.toggleGoaliePulled();
+			calculateAndSetTimers();
 			DEBUG_LABEL.Text = "Away Goalie Pulled";
 			_log.Info(DEBUG_LABEL.Text);
 		}
 
 		private void AwayGoaliePulled_Unchecked(object sender, RoutedEventArgs e) {
 			awayTeam.toggleGoaliePulled();
+			calculateAndSetTimers();
 			DEBUG_LABEL.Text = "Away Goalie In Net";
 			_log.Info(DEBUG_LABEL.Text);
 		}
@@ -514,7 +549,7 @@ namespace Scoreboard {
 				awayTeam.queuePenalty(queuedPenalty);
 			}
 			setPenaltyInformation();
-			calculateAndWriteTimers();
+			calculateAndSetTimers();
 			DEBUG_LABEL.Text = "Queueing Away Penalty";
 			_log.Info(DEBUG_LABEL.Text);
 		}
@@ -523,7 +558,7 @@ namespace Scoreboard {
 			TimeSpan queuedPenalty = formatTimeSpan(AwayPenMinutes1.Text, AwayPenSeconds1.Text);
 			awayTeam.setPen1(queuedPenalty);
 			setPenaltyInformation();
-			calculateAndWriteTimers();
+			calculateAndSetTimers();
 			DEBUG_LABEL.Text = "Setting First Away Penalty";
 			_log.Info(DEBUG_LABEL.Text);
 		}
@@ -532,7 +567,7 @@ namespace Scoreboard {
 			TimeSpan queuedPenalty = formatTimeSpan(AwayPenMinutes2.Text, AwayPenSeconds2.Text);
 			awayTeam.setPen2(queuedPenalty);
 			setPenaltyInformation();
-			calculateAndWriteTimers();
+			calculateAndSetTimers();
 			DEBUG_LABEL.Text = "Setting Second Away Penalty";
 			_log.Info(DEBUG_LABEL.Text);
 		}
@@ -544,7 +579,7 @@ namespace Scoreboard {
 			awayTeam.clearPen1();
 			setPenaltyInformation();
 			if (!timer.Running) {
-				calculateAndWriteTimers();
+				calculateAndSetTimers();
 			}
 			DEBUG_LABEL.Text = "Clearing First Away Penalty";
 			_log.Info(DEBUG_LABEL.Text);
@@ -557,11 +592,32 @@ namespace Scoreboard {
 			awayTeam.clearPen2();
 			setPenaltyInformation();
 			if (!timer.Running) {
-				calculateAndWriteTimers();
+				calculateAndSetTimers();
 			}
 			DEBUG_LABEL.Text = "Clearing Second Away Penalty";
 			_log.Info(DEBUG_LABEL.Text);
 		}
 
+		private void AwayImageButton_Click(object sender, RoutedEventArgs e) {
+			OpenFileDialog dlg = new OpenFileDialog();
+			dlg.Filter = "Image Files(*PNG;*.BMP;*.JPG;*.GIF)|*PNG;*.BMP;*.JPG;*.GIF|All files (*.*)|*.*";
+
+			Nullable<bool> result = dlg.ShowDialog();
+
+			if (result == true) {
+				string filename = dlg.FileName;
+				Uri uriPath = new Uri(filename);
+				BitmapImage bmp = new BitmapImage(uriPath);
+				if (bmp.PixelWidth == 800 && bmp.PixelHeight == 160) {
+					AwayImage.Source = bmp;
+					banner.AwayBackground.Source = bmp;
+					DEBUG_LABEL.Text = "New Away Image: " + Path.GetFileName(filename);
+				}
+				else {
+					DEBUG_LABEL.Text = "Selected File Does not have compatible dimensions";
+				}
+
+			}
+		}
 	}
 }

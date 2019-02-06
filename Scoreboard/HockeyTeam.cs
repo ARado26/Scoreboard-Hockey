@@ -43,9 +43,6 @@ namespace Scoreboard {
 
 		public void calculateAndSetActiveSkaters() {
 			int skaters = 5;
-			if (goaliePulled) {
-				++skaters;
-			}
 			if (penalty1.TotalMilliseconds != 0) {
 				--skaters;
 			}

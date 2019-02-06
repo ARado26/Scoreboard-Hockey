@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <StartupObject>Scoreboard.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>ScoreboardIcon.ico</ApplicationIcon>
@@ -77,6 +77,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -99,7 +100,6 @@
       <DependentUpon>GameInfoBanner.xaml</DependentUpon>
     </Compile>
     <Compile Include="PenaltyAndTimeCalculator.cs" />
-    <Compile Include="ScoreboardFileWriter.cs" />
     <Page Include="GameInfoBanner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -162,6 +162,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ScoreboardIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Away_Cell_Specular.png" />
+    <Resource Include="Images\Clock_Cell.png" />
+    <Resource Include="Images\Home_Cell_Specular.png" />
+    <Resource Include="Images\Penalty_Cell.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

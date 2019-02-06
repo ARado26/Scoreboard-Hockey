@@ -26,6 +26,17 @@ namespace Scoreboard {
 			info += JsonConvert.SerializeObject(this);
 			return info;
 		}
+
+		public string getFormattedGameTime() {
+			string formattedTime;
+			if (gameTime.Minutes > 0) {
+				formattedTime = PenaltyAndTimeCalculator.timeSpanToTimeString(gameTime);
+			} else {
+				double seconds = gameTime.TotalSeconds;
+				formattedTime = string.Format("{0:N2}", seconds);
+			}
+			return formattedTime;
+		}
 		
     }
 }

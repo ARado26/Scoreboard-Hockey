@@ -35,6 +35,35 @@ namespace Scoreboard.Tests {
 
 			home.setPen1(new TimeSpan(0, 2, 0));
 			home.managePenalties();
+			away.setPen1(new TimeSpan(0, 2, 0));
+			away.managePenalties();
+			t = PenaltyAndTimeCalculator.calculateTeamWithAdvantage(home, away);
+			Assert.AreEqual("NONE", t);
+
+
+			home.setPen1(new TimeSpan(0, 2, 0));
+			home.setPen2(new TimeSpan(0, 2, 0));
+			home.managePenalties();
+			away.setPen1(new TimeSpan(0, 2, 0));
+			away.setPen2(new TimeSpan(0, 2, 0));
+			away.managePenalties();
+			t = PenaltyAndTimeCalculator.calculateTeamWithAdvantage(home, away);
+			Assert.AreEqual("NONE", t);
+
+			home.toggleGoaliePulled();
+			home.setPen1(new TimeSpan(0, 2, 0));
+			home.setPen2(new TimeSpan(0, 2, 0));
+			home.managePenalties();
+			away.toggleGoaliePulled();
+			away.setPen1(new TimeSpan(0, 2, 0));
+			away.setPen2(new TimeSpan(0, 2, 0));
+			away.managePenalties();
+			t = PenaltyAndTimeCalculator.calculateTeamWithAdvantage(home, away);
+			Assert.AreEqual("NONE", t);
+
+
+			home.setPen1(new TimeSpan(0, 2, 0));
+			home.managePenalties();
 			t = PenaltyAndTimeCalculator.calculateTeamWithAdvantage(home, away);
 			Assert.AreEqual("AWAY", t);
 

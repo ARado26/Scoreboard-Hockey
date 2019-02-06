@@ -30,13 +30,12 @@ namespace Scoreboard {
 		}
 
 		public void setEvenStrength(string penaltyInfo) {
-			if (penaltyInfo != "") {
-				EvenStrengthBackground.Visibility = System.Windows.Visibility.Visible;
-				EvenStrength.Text = penaltyInfo;
+			EvenStrength.Text = penaltyInfo;
+			if (penaltyInfo == "") {
+				EvenStrengthBackground.Visibility = System.Windows.Visibility.Hidden;
 			}
 			else {
-				EvenStrengthBackground.Visibility = System.Windows.Visibility.Hidden;
-				EvenStrength.Text = penaltyInfo;
+				EvenStrengthBackground.Visibility = System.Windows.Visibility.Visible;
 			}
 		}
 
@@ -49,13 +48,12 @@ namespace Scoreboard {
 		}
 
 		public void setHomeAdvantage(string penaltyInfo) {
-			if (penaltyInfo != "") {
-				HomeAdvantageBackground.Visibility = System.Windows.Visibility.Visible;
-				HomeAdvantage.Text = penaltyInfo;
+			HomeAdvantage.Text = penaltyInfo;
+			if (penaltyInfo == "") {
+				HomeAdvantageBackground.Visibility = System.Windows.Visibility.Hidden;
 			}
 			else {
-				HomeAdvantageBackground.Visibility = System.Windows.Visibility.Hidden;
-				HomeAdvantage.Text = penaltyInfo;
+				HomeAdvantageBackground.Visibility = System.Windows.Visibility.Visible;
 			}
 		}
 
@@ -68,16 +66,13 @@ namespace Scoreboard {
 		}
 
 		public void setAwayAdvantage(string penaltyInfo) {
-			if(penaltyInfo != "") {
-				AwayAdvantageBackground.Visibility = System.Windows.Visibility.Visible;
-				AwayAdvantage.Text = penaltyInfo;
+			AwayAdvantage.Text = penaltyInfo;
+			if (penaltyInfo == "") {
+				AwayAdvantageBackground.Visibility = System.Windows.Visibility.Hidden;
 			}
 			else {
-				AwayAdvantageBackground.Visibility = System.Windows.Visibility.Hidden;
-				AwayAdvantage.Text = penaltyInfo;
+				AwayAdvantageBackground.Visibility = System.Windows.Visibility.Visible;
 			}
 		}
-
-
 	}
 }

@@ -14,59 +14,59 @@
 		Closing="Window_Closing"
 		Topmost="False"
 		>
-    <Grid x:Name="MainGrid" VerticalAlignment="Center" >
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-        </Grid.ColumnDefinitions>
+	<Grid x:Name="MainGrid" >
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="1*"/>
+			<ColumnDefinition Width="1*"/>
+			<ColumnDefinition Width="1*"/>
+		</Grid.ColumnDefinitions>
 
-        <Grid x:Name="HomeTeamGrid" Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="60"/>
-                <RowDefinition Height="120"/>
-                <RowDefinition Height="240"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
+		<Grid x:Name="HomeTeamGrid" Grid.Column="0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="30"/>
+				<RowDefinition Height="60"/>
+				<RowDefinition Height="120"/>
+				<RowDefinition Height="240"/>
+				<RowDefinition Height="1*"/>
+			</Grid.RowDefinitions>
 
-            <Label Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold" FontSize="14" Height="29" Width="119">Home Team Info</Label>
+			<Label Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold" FontSize="14" Height="29" Width="119">Home Team Info</Label>
 
-            <Label Grid.Row="1" VerticalAlignment="Top" Height="26">Home Team Name</Label>
+			<Label Grid.Row="1" VerticalAlignment="Top" Height="26">Home Team Name</Label>
 			<TextBox x:Name="HomeNameTextBox" Grid.Row="1" HorizontalAlignment="Center" Height="23" Width="150" VerticalAlignment="Center" Margin="74,26,73,10" TextAlignment="Center" MaxLength="4" TextChanged="HomeNameTextBox_TextChanged" />
 
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="3*"/>
-                </Grid.RowDefinitions>
-                <Label  VerticalAlignment="Top" Height="26" Grid.ColumnSpan="3">Home Team Score</Label>
+			<Grid Grid.Row="2">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="3*"/>
+				</Grid.RowDefinitions>
+				<Label  VerticalAlignment="Top" Height="26" Grid.ColumnSpan="3">Home Team Score</Label>
 				<Button x:Name="HomeSubGoalButton" Grid.Row="1" Margin="20,14,20,16" Click="HomeSubGoalButton_Click">-</Button>
 				<TextBox x:Name="HomeScore" Grid.Column="1" HorizontalAlignment="Left" Margin="0,14,0,0" Grid.Row="1" VerticalAlignment="Top" Width="99" TextAlignment="Center" FontSize="40" Height="63" MaxLength="2" TextChanged="HomeScore_TextChanged"/>
 				<Button x:Name="HomeAddGoalButton" Grid.Row="1" Grid.Column="2"  Margin="20,14,20,16" Click="HomeAddGoalButton_Click">+</Button>
-            </Grid>
+			</Grid>
 
-            <Grid x:Name="HomePenalties" Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="3*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
+			<Grid x:Name="HomePenalties" Grid.Row="3">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="2*"/>
+					<ColumnDefinition Width="1*"/>
+					<ColumnDefinition Width="2*"/>
+					<ColumnDefinition Width="3*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="1*"/>
+					<RowDefinition Height="1*"/>
+					<RowDefinition Height="1*"/>
+				</Grid.RowDefinitions>
 
-                <TextBox x:Name="HomePenMinutes1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" Text="0" />
-                <Label Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
-                <TextBox x:Name="HomePenSeconds1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" Text="00"/>
+				<TextBox x:Name="HomePenMinutes1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" Text="0" />
+				<Label Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
+				<TextBox x:Name="HomePenSeconds1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" Text="00"/>
 				<Grid Grid.Column="3">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition/>
@@ -74,10 +74,10 @@
 					</Grid.ColumnDefinitions>
 					<Button x:Name="HomePen1SetButton" Margin="5,10" Click="HomePen1SetButton_Click">Set</Button>
 					<Button x:Name="HomePen1ClearButton" Grid.Column="1" Margin="5,10" Click="HomePen1ClearButton_Click">Clear</Button>
-                </Grid>
+				</Grid>
 
 				<TextBox x:Name="HomePenMinutes2"  Grid.Row="1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" Text="0"/>
-                <Label Grid.Row="1" Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
+				<Label Grid.Row="1" Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
 				<TextBox x:Name="HomePenSeconds2" Grid.Row="1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" Text="00"/>
 				<Grid Grid.Row="1" Grid.Column="3">
 					<Grid.ColumnDefinitions>
@@ -86,132 +86,151 @@
 					</Grid.ColumnDefinitions>
 					<Button x:Name="HomePen2SetButton" Margin="5,10" Click="HomePen2SetButton_Click">Set</Button>
 					<Button x:Name="HomePen2ClearButton" Grid.Column="1" Margin="5,10" Click="HomePen2ClearButton_Click">Clear</Button>
-                </Grid>
+				</Grid>
 
-                <TextBox x:Name="HomePenMinutesQ"  Grid.Row="2" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" Text="2" MaxLength="2"/>
-                <Label Grid.Row="2" Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
-                <TextBox x:Name="HomePenSecondsQ" Grid.Row="2" Grid.Column="2" TextAlignment="Center" FontSize="40" Text="00" MaxLength="2" Margin="0,10"/>
-                <Button x:Name="HomePenQueueButton" Grid.Row="2" Grid.Column="3" Margin="5,10" Click="HomePenQueueButton_Click">Queue</Button>
+				<TextBox x:Name="HomePenMinutesQ"  Grid.Row="2" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" Text="2" MaxLength="2"/>
+				<Label Grid.Row="2" Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
+				<TextBox x:Name="HomePenSecondsQ" Grid.Row="2" Grid.Column="2" TextAlignment="Center" FontSize="40" Text="00" MaxLength="2" Margin="0,10"/>
+				<Button x:Name="HomePenQueueButton" Grid.Row="2" Grid.Column="3" Margin="5,10" Click="HomePenQueueButton_Click">Queue</Button>
 
-            </Grid>
+			</Grid>
 
-            <Label Grid.Row="4" Content="Home Penalties in Queue: " Margin="20,5,135,35" />
-            <Label x:Name="HomePenaltiesQueued" Grid.Row="4" Content="0" Margin="180,5,100,35" />
-            <CheckBox x:Name="HomeGoaliePulled"  Grid.Row="4" Content="Goalie Pulled" HorizontalAlignment="Left"  VerticalAlignment="Top"  Margin="20,35,0,0" Checked="HomeGoaliePulled_Checked" Unchecked="HomeGoaliePulled_Unchecked" />
+			<Grid Grid.Row="4">
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition Height="2*"/>
+				</Grid.RowDefinitions>
+				<Label Grid.Row="0" Content="Home Penalties in Queue: " Margin="20,0,-20,0" VerticalAlignment="Center"/>
+				<Label x:Name="HomePenaltiesQueued" Grid.Row="0"  Content="0" Margin="161,0,0,0" VerticalAlignment="Center"/>
+				<CheckBox x:Name="HomeGoaliePulled" Grid.Row="1" Content="Goalie Pulled" Margin="20,0,0,0" Checked="HomeGoaliePulled_Checked" Unchecked="HomeGoaliePulled_Unchecked" VerticalAlignment="Center" />
+
+				<Grid Grid.Row="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="5*"/>
+						<ColumnDefinition Width="3*"/>
+					</Grid.ColumnDefinitions>
+					<!--<Label x:Name="HomeImageName" VerticalContentAlignment="Center" Content="filename" Width="178" Margin="20,5,0,20"/>-->
+					<Image x:Name="HomeImage" Stretch="Fill" Margin="20,5,0,20" />
+					<Button x:Name="HomeImageButton" Grid.Column="1" Content="Browse" Margin="5,5,5,20" Click="HomeImageButton_Click"/>
+
+				</Grid>
+			</Grid>
+		</Grid>
 
 
+		<Grid x:Name="GameInfoGrid" Grid.Column="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="121*"/>
+				<ColumnDefinition Width="36*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="30"/>
+				<RowDefinition Height="120"/>
+				<RowDefinition Height="120"/>
+				<RowDefinition Height="120"/>
+				<RowDefinition Height="1*"/>
+			</Grid.RowDefinitions>
+			<Label Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold" FontSize="14" Height="30" Width="119">Game Info</Label>
 
-        </Grid>
+			<Grid Grid.Row="1" Grid.ColumnSpan="2" >
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="2*"/>
+					<ColumnDefinition Width=".3*"/>
+					<ColumnDefinition Width="2*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="1.5*"/>
+					<RowDefinition Height="1*"/>
+				</Grid.RowDefinitions>
+
+				<TextBox x:Name="GameClockMinutes" Margin="50,10,0,10" TextAlignment="Center" FontSize="40" Text="0" MaxLength="2"/>
+				<Label Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="70" Width="20" Margin="2,-3,0,5"  />
+				<TextBox x:Name="GameClockSeconds" Grid.Column="2" TextAlignment="Center" FontSize="40" Text="00" MaxLength="2" Margin="0,10,50,10"/>
+
+				<Button x:Name="ClockSetButton" Grid.Row="1" Content="Set" Margin="50,10,0,10" Click="ClockSetButton_Click"/>
+				<Button x:Name="ClockToggleButton" Grid.Row="1" Grid.Column="2" Content="Start" Margin="0,10,50,10" Click="ClockToggleButton_Click"/>
+
+			</Grid>
+			<Grid Grid.Row="2" Grid.ColumnSpan="2" >
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="1.5*"/>
+					<RowDefinition Height="1*"/>
+				</Grid.RowDefinitions>
+
+				<TextBox x:Name="GamePeriod" Grid.ColumnSpan="2" Margin="80,10" TextAlignment="Center" FontSize="40" Text="" MaxLength="5"/>
+				<ComboBox x:Name="GamePeriodPicker" Grid.Row="1" Margin="50,10,10,10" SelectionChanged="GamePeriodPicker_SelectionChanged">
+					<ComboBoxItem>PG</ComboBoxItem>
+					<ComboBoxItem>1st</ComboBoxItem>
+					<ComboBoxItem>1INT</ComboBoxItem>
+					<ComboBoxItem>2nd</ComboBoxItem>
+					<ComboBoxItem>2INT</ComboBoxItem>
+					<ComboBoxItem>3rd</ComboBoxItem>
+					<ComboBoxItem>OT</ComboBoxItem>
+					<ComboBoxItem>SO</ComboBoxItem>
+					<ComboBoxItem>FIN</ComboBoxItem>
+				</ComboBox>
+				<Button x:Name="GamePeriodSetter" Grid.Row="1" Grid.Column="1" Content="Set" Margin="10,10,50,10" Click="GamePeriodSetter_Click"/>
 
 
-        <Grid x:Name="GameInfoGrid" Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="120"/>
-                <RowDefinition Height="120"/>
-                <RowDefinition Height="120"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
-            <Label Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold" FontSize="14" Height="29" Width="119" Margin="0,1">Game Info</Label>
-
-            <Grid Grid.Row="1" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width=".3*"/>
-                    <ColumnDefinition Width="2*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1.5*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
-
-                <TextBox x:Name="GameClockMinutes" Margin="50,10,0,10" TextAlignment="Center" FontSize="40" Text="0" MaxLength="2"/>
-                <Label Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="70" Width="20" Margin="2,-3,0,5"  />
-                <TextBox x:Name="GameClockSeconds" Grid.Column="2" TextAlignment="Center" FontSize="40" Text="00" MaxLength="2" Margin="0,10,50,10"/>
-                
-                <Button x:Name="ClockSetButton" Grid.Row="1" Content="Set" Margin="50,10,0,10" Click="ClockSetButton_Click"/>
-                <Button x:Name="ClockToggleButton" Grid.Row="1" Grid.Column="2" Content="Start" Margin="0,10,50,10" Click="ClockToggleButton_Click"/>
-
-            </Grid>
-            <Grid Grid.Row="2" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1.5*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
-
-                <TextBox x:Name="GamePeriod" Grid.ColumnSpan="2" Margin="80,10" TextAlignment="Center" FontSize="40" Text="" MaxLength="5"/>
-                <ComboBox x:Name="GamePeriodPicker" Grid.Row="1" Margin="50,10,10,10" SelectionChanged="GamePeriodPicker_SelectionChanged">
-                    <ComboBoxItem>PG</ComboBoxItem>
-                    <ComboBoxItem>1st</ComboBoxItem>
-                    <ComboBoxItem>1INT</ComboBoxItem>
-                    <ComboBoxItem>2nd</ComboBoxItem>
-                    <ComboBoxItem>2INT</ComboBoxItem>
-                    <ComboBoxItem>3rd</ComboBoxItem>
-                    <ComboBoxItem>OT</ComboBoxItem>
-                    <ComboBoxItem>SO</ComboBoxItem>
-                    <ComboBoxItem>FIN</ComboBoxItem>
-                </ComboBox>
-                <Button x:Name="GamePeriodSetter" Grid.Row="1" Grid.Column="1" Content="Set" Margin="10,10,50,10" Click="GamePeriodSetter_Click"/>
-                
-
-            </Grid>
-			<Grid Grid.Row="3">
+			</Grid>
+			<Grid Grid.Row="3" Grid.ColumnSpan="2">
 				<Button x:Name="ResetAllButton"  Content="Reset All" Margin="10,30" Click="ResetAllButton_Click"/>
-                
-            </Grid>
 
-            <Grid Grid.Row="4">
-                <TextBlock x:Name="DEBUG_LABEL" FontSize = "18" Margin = "5" Text = "DEBUG" TextAlignment="Center" TextWrapping="Wrap" />
-            </Grid>
-        </Grid>
+			</Grid>
+
+			<Grid Grid.Row="4" Grid.ColumnSpan="2">
+				<TextBlock x:Name="DEBUG_LABEL" FontSize = "18" Margin = "5" Text = "DEBUG" TextAlignment="Center" TextWrapping="Wrap" />
+			</Grid>
+		</Grid>
 
 
-        <Grid x:Name="AwayTeamGrid" Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="60"/>
-                <RowDefinition Height="120"/>
-                <RowDefinition Height="240"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
+		<Grid x:Name="AwayTeamGrid" Grid.Column="2">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="30"/>
+				<RowDefinition Height="60"/>
+				<RowDefinition Height="120"/>
+				<RowDefinition Height="240"/>
+				<RowDefinition Height="1*"/>
+			</Grid.RowDefinitions>
 
-            <Label Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold" FontSize="14" Height="29" Width="119">Away Team Info</Label>
+			<Label Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontWeight="Bold" FontSize="14" Height="29" Width="119">Away Team Info</Label>
 
-            <Label Grid.Row="1" VerticalAlignment="Top" Height="26">Away Team Name</Label>
+			<Label Grid.Row="1" VerticalAlignment="Top" Height="26">Away Team Name</Label>
 			<TextBox x:Name="AwayNameTextBox" Grid.Row="1" HorizontalAlignment="Center" Height="23" Width="150" VerticalAlignment="Center"   Margin="74,26,73,10" TextAlignment="Center" MaxLength="4" TextChanged="AwayNameTextBox_TextChanged"/>
 
-            <Grid Grid.Row="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="3*"/>
-                </Grid.RowDefinitions>
-                <Label  VerticalAlignment="Top" Height="26" Grid.ColumnSpan="3">Away Team Score</Label>
-                <Button x:Name="AwaySubGoalButton" Grid.Row="1" Margin="20,14,20,16" Click="AwaySubGoalButton_Click">-</Button>
+			<Grid Grid.Row="2">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="3*"/>
+				</Grid.RowDefinitions>
+				<Label  VerticalAlignment="Top" Height="26" Grid.ColumnSpan="3">Away Team Score</Label>
+				<Button x:Name="AwaySubGoalButton" Grid.Row="1" Margin="20,14,20,16" Click="AwaySubGoalButton_Click">-</Button>
 				<TextBox x:Name="AwayScore" Grid.Column="1" HorizontalAlignment="Left" Margin="0,14,0,0" Grid.Row="1" VerticalAlignment="Top" Width="99" TextAlignment="Center" FontSize="40" Height="63" MaxLength="2" TextChanged="AwayScore_TextChanged"/>
 				<Button x:Name="AwayAddGoalButton" Grid.Row="1" Grid.Column="2"  Margin="20,14,20,16" Click="AwayAddGoalButton_Click">+</Button>
-            </Grid>
+			</Grid>
 
-            <Grid x:Name="AwayPenalties" Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="3*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                </Grid.RowDefinitions>
+			<Grid x:Name="AwayPenalties" Grid.Row="3">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="2*"/>
+					<ColumnDefinition Width="1*"/>
+					<ColumnDefinition Width="2*"/>
+					<ColumnDefinition Width="3*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="1*"/>
+					<RowDefinition Height="1*"/>
+					<RowDefinition Height="1*"/>
+				</Grid.RowDefinitions>
 
 				<TextBox x:Name="AwayPenMinutes1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" Text="0"/>
 				<Label Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
@@ -223,10 +242,10 @@
 					</Grid.ColumnDefinitions>
 					<Button x:Name="AwayPen1SetButton" Margin="5,10" Click="AwayPen1SetButton_Click">Set</Button>
 					<Button x:Name="AwayPen1ClearButton" Grid.Column="1" Margin="5,10" Click="AwayPen1ClearButton_Click">Clear</Button>
-                </Grid>
+				</Grid>
 
 				<TextBox x:Name="AwayPenMinutes2"  Grid.Row="1" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" MaxLength="2" Text="0"/>
-                <Label Grid.Row="1" Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
+				<Label Grid.Row="1" Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
 				<TextBox x:Name="AwayPenSeconds2" Grid.Row="1" Grid.Column="2" TextAlignment="Center" FontSize="40" MaxLength="2" Margin="0,10" Text="00" />
 				<Grid Grid.Row="1" Grid.Column="3">
 					<Grid.ColumnDefinitions>
@@ -235,19 +254,36 @@
 					</Grid.ColumnDefinitions>
 					<Button x:Name="AwayPen2SetButton" Margin="5,10" Click="AwayPen2SetButton_Click">Set</Button>
 					<Button x:Name="AwayPen2ClearButton" Grid.Column="1" Margin="5,10" Click="AwayPen2ClearButton_Click">Clear</Button>
-                </Grid>
+				</Grid>
 
-                <TextBox x:Name="AwayPenMinutesQ"  Grid.Row="2" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" Text="2" MaxLength="2"/>
-                <Label Grid.Row="2" Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
-                <TextBox x:Name="AwayPenSecondsQ" Grid.Row="2" Grid.Column="2" TextAlignment="Center" FontSize="40" Text="00" MaxLength="2" Margin="0,10"/>
-                <Button x:Name="AwayPenQueueButton" Grid.Row="2" Grid.Column="3" Margin="5,10" Click="AwayPenQueueButton_Click">Queue</Button>
+				<TextBox x:Name="AwayPenMinutesQ"  Grid.Row="2" Margin="20,10,0,10" TextAlignment="Center" FontSize="40" Text="2" MaxLength="2"/>
+				<Label Grid.Row="2" Grid.Column="1" Content=":"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" Height="74" Width="20" Margin="6,2,6,3"/>
+				<TextBox x:Name="AwayPenSecondsQ" Grid.Row="2" Grid.Column="2" TextAlignment="Center" FontSize="40" Text="00" MaxLength="2" Margin="0,10"/>
+				<Button x:Name="AwayPenQueueButton" Grid.Row="2" Grid.Column="3" Margin="5,10" Click="AwayPenQueueButton_Click">Queue</Button>
 
-            </Grid>
+			</Grid>
 
-            <Label Grid.Row="4" Content="Away Penalties in Queue: " Margin="20,5,135,35" />
-            <Label x:Name="AwayPenaltiesQueued" Grid.Row="4" Content="0" Margin="180,5,100,35" />
-            <CheckBox x:Name="AwayGoaliePulled"  Grid.Row="4" Content="Goalie Pulled" HorizontalAlignment="Left"  VerticalAlignment="Top"  Margin="20,35,0,0" Checked="AwayGoaliePulled_Checked" Unchecked="AwayGoaliePulled_Unchecked"/>
+			<Grid Grid.Row="4">
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition Height="2*"/>
+				</Grid.RowDefinitions>
+				<Label Grid.Row="0" Content="Home Penalties in Queue: " Margin="20,0,-20,0" VerticalAlignment="Center"/>
+				<Label x:Name="AwayPenaltiesQueued" Grid.Row="0"  Content="0" Margin="161,0,0,0" VerticalAlignment="Center"/>
+				<CheckBox x:Name="AwayGoaliePulled" Grid.Row="1" Content="Goalie Pulled" Margin="20,0,0,0" Checked="AwayGoaliePulled_Checked" Unchecked="AwayGoaliePulled_Unchecked" VerticalAlignment="Center" />
 
-        </Grid>
-    </Grid>
+				<Grid Grid.Row="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="5*"/>
+						<ColumnDefinition Width="3*"/>
+					</Grid.ColumnDefinitions>
+					<!--<Label x:Name="AwayImageName"  VerticalContentAlignment="Center" Content="filename" Width="178" Margin="20,5,0,20"/>-->
+					<Image x:Name="AwayImage" Stretch="Fill" Margin="20,5,0,20" />
+					<Button x:Name="AwayImageButton" Grid.Column="1" Content="Browse" Margin="5,5,5,20" Click="AwayImageButton_Click"/>
+				</Grid>
+
+			</Grid>
+		</Grid>
+	</Grid>
 </Window>

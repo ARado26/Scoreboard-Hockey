@@ -25,7 +25,7 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 
-		<Image x:Name="HomeBackground" Source="C:\Users\aradosevic\Pictures\EMU_Specular.jpg"/>
+		<Image x:Name="HomeBackground" Source=".\Images\Home_Cell_Specular.png"/>
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="100"/>
@@ -37,7 +37,7 @@
 			
 		</Grid>
 
-		<Image x:Name="ClockBackground" Grid.Column="1" Source="C:\Users\aradosevic\Pictures\Clock_Cell.png" />
+		<Image x:Name="ClockBackground" Grid.Column="1" Source=".\Images\Clock_Cell.png" />
 		<Grid Grid.Column="1">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="1.5*"/>
@@ -47,7 +47,7 @@
 			<TextBlock x:Name="Period" Grid.Column="1" TextWrapping="NoWrap" Text="" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana"/>
 		</Grid>
 
-		<Image x:Name="AwayBackground" Grid.Column="2" Source="C:\Users\aradosevic\Pictures\EMU_Specular.jpg"/>
+		<Image x:Name="AwayBackground" Grid.Column="2" Source=".\Images\Away_Cell_Specular.png"/>
 		<Grid Grid.Column="2">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="100"/>
@@ -58,14 +58,18 @@
 			<TextBlock x:Name="AwayScore" Grid.Column="2" TextWrapping="NoWrap" Text="0" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="White"/>
 		</Grid>
 
-		<Image x:Name="HomeAdvantageBackground" Grid.Row="1" Source="C:\Users\aradosevic\Pictures\Penalty_Cell.png" Visibility="Hidden"/>
-		<TextBlock x:Name="HomeAdvantage" Grid.Row="1" TextWrapping="NoWrap" Text="" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
-
-		<Image x:Name="EvenStrengthBackground" Grid.Column="1" Grid.Row="1" Source="C:\Users\aradosevic\Pictures\Penalty_Cell.png" Visibility="Hidden"/>
-		<TextBlock x:Name="EvenStrength" Grid.Column="1" Grid.Row="1" TextWrapping="NoWrap" Text="" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
+		<Grid Grid.Row="1">
+			<Image x:Name="HomeAdvantageBackground" Stretch="Fill" Source=".\Images\Penalty_Cell.png" Visibility="Hidden"/>
+			<TextBlock x:Name="HomeAdvantage" TextWrapping="NoWrap" Text="" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
+		</Grid>
 		
-		<Image x:Name="AwayAdvantageBackground" Grid.Column="2" Grid.Row="1" Source="C:\Users\aradosevic\Pictures\Penalty_Cell.png" Visibility="Hidden"/>
-		<TextBlock x:Name="AwayAdvantage" Grid.Column="2" Grid.Row="1" TextWrapping="NoWrap" Text="" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
 
+		<Image x:Name="EvenStrengthBackground" Grid.Column="1" Grid.Row="1" Source=".\Images\Penalty_Cell.png" Visibility="Hidden"/>
+		<TextBlock x:Name="EvenStrength" Grid.Column="1" Grid.Row="1" TextWrapping="NoWrap" Text="" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
+
+		<Grid Grid.Column="2" Grid.Row="1">
+			<Image x:Name="AwayAdvantageBackground" Stretch="Fill" Source=".\Images\Penalty_Cell.png" Visibility="Hidden"/>
+			<TextBlock x:Name="AwayAdvantage"  TextWrapping="NoWrap" Text="" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
+		</Grid>
 	</Grid>
 </Window>

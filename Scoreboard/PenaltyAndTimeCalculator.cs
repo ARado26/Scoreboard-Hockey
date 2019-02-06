@@ -21,24 +21,41 @@ namespace Scoreboard {
 			return teamWithAdvantage;
 		}
 
-		public static string calculatePlayerAdvantage(HockeyTeam home, HockeyTeam away) {
+		public static string calculatePlayerAdvantage(HockeyTeam team1, HockeyTeam team2) {
 			string advantage = "";
-			List<int> playerCounts = new List<int> {
-				home.activeSkaters,
-				away.activeSkaters
-			};
-			int max = playerCounts.Max();
-			int min = playerCounts.Min();
-			if (max == 6 && min == 5) {
-				advantage = "Empty Net";
-			}
-			else if (max == 5 && min == 4) {
+			if (team1.activeSkaters == 5 && team2.activeSkaters == 4) {
 				advantage = "PP";
 			}
+			else if(team1.activeSkaters == 5 && team2.activeSkaters == 3) {
+				advantage = "2PP";
+			}
+			else if (team1.activeSkaters == 4 && team2.activeSkaters == 3) {
+				advantage = "4 on 3";
+			}
 			else {
-				advantage += max.ToString();
-				advantage += " on ";
-				advantage += min.ToString();
+				advantage = "";
+			}
+			if (team1.goaliePulled) {
+				if (advantage == "") {
+					advantage = "Empty Net";
+				}
+				else {
+					advantage = "EN " + advantage;
+				}
+			}
+			return advantage;
+		}
+
+		public static string calculateEvenStrength(HockeyTeam team1, HockeyTeam team2) {
+			string advantage = "";
+			if (team1.activeSkaters == 5 && team2.activeSkaters == 5) {
+				advantage = "";
+			}
+			else if (team1.activeSkaters == 4 && team2.activeSkaters == 4) {
+				advantage = "4 on 4";
+			}
+			else if (team1.activeSkaters == 3 && team2.activeSkaters == 3) {
+				advantage = "3 on 3";
 			}
 			return advantage;
 		}
