@@ -14,13 +14,14 @@ namespace Scoreboard {
 	/// </summary>
 	public partial class MainWindow : Window
     {
+
+		public GameInfoBanner banner;
+
 		public HockeyTeam homeTeam { get; set; }
 		public HockeyTeam awayTeam { get; set; }
 		public GameInfo gameInfo { get; set; }
-		public ScoreboardFileWriter writer { get; set; }
 		public enum CLOCK_STATES{ STOPPED, RUNNING }
 		public CLOCK_STATES clockState;
-		public string path;
 
 		private GameTimer timer { get; set; }
 		private int refreshes = 0;
@@ -37,12 +38,11 @@ namespace Scoreboard {
 		}
 
 		public void initData() {
+			banner = new GameInfoBanner();
 			gameInfo = new GameInfo();
 			homeTeam = new HockeyTeam("HOME");
 			awayTeam = new HockeyTeam("AWAY");
 			timer = new GameTimer(REFRESH_INTERVAL);
-			path = ".\\TextFiles";
-			writer = new ScoreboardFileWriter(path);
 			
 			_log.Info("Initializing Data");
 		}
@@ -52,8 +52,7 @@ namespace Scoreboard {
 			timer.Refresh += HandleRefresh;
 			
 			timer.setTimerFields(gameInfo, homeTeam, awayTeam);
-
-
+			
 			GameClockMinutes.Text = gameInfo.gameTime.Minutes.ToString();
 			string s = gameInfo.gameTime.Seconds.ToString();
 			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
@@ -77,6 +76,8 @@ namespace Scoreboard {
 			DEBUG_LABEL.Text = "DEBUG";
 
 			setPenaltyInformation();
+			banner.Show();
+			banner.Activate();
 
 			_log.Info("Initializing UI and Relevant Data");
 		}
@@ -109,6 +110,7 @@ namespace Scoreboard {
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			timer.Dispose();
+			banner.Close();
 			_log.Info("Exiting");
 		}
 
@@ -135,7 +137,7 @@ namespace Scoreboard {
 		private void GamePeriodPicker_SelectionChanged(object sender, SelectionChangedEventArgs e){
 			string period = ((ComboBoxItem)GamePeriodPicker.SelectedItem).Content.ToString();
 			gameInfo.setPeriod(gameInfo.period);
-			writer.writePeriod(period);
+			banner.setPeriod(period);
 			GamePeriod.Text = period;
 			DEBUG_LABEL.Text = "Period Set: " + GamePeriod.Text;
 			_log.Debug(DEBUG_LABEL.Text);
@@ -143,7 +145,7 @@ namespace Scoreboard {
 
 		private void GamePeriodSetter_Click(object sender, RoutedEventArgs e) {
 			gameInfo.setPeriod(GamePeriod.Text);
-			writer.writePeriod(gameInfo.period);
+			banner.setPeriod(gameInfo.period);
 			DEBUG_LABEL.Text = "Period Set: " + GamePeriod.Text;
 			_log.Debug(DEBUG_LABEL.Text);
 		}
@@ -291,7 +293,7 @@ namespace Scoreboard {
 		}
 
 		private void calculateAndWriteTimers() {
-			writer.writeGameClock(PenaltyAndTimeCalculator.timeSpanToPenaltyString(gameInfo.gameTime));
+			banner.setTime(PenaltyAndTimeCalculator.timeSpanToTimeString(gameInfo.gameTime));
 			string teamWithAdvantage = PenaltyAndTimeCalculator.calculateTeamWithAdvantage(homeTeam, awayTeam);
 			string status = PenaltyAndTimeCalculator.calculatePlayerAdvantage(homeTeam, awayTeam);
 			string time = PenaltyAndTimeCalculator.calculateTimeToDisplay(homeTeam, awayTeam);
@@ -299,27 +301,25 @@ namespace Scoreboard {
 			switch (teamWithAdvantage) {
 				case "NONE":
 					if (homeTeam.activeSkaters == 5 && awayTeam.activeSkaters == 5) {
-						writer.writeEvenStrengthPenaltyInfo("");
+						banner.setEvenStrength("");
 					}
 					else {
-						writer.writeEvenStrengthPenaltyInfo(status);
+						banner.setEvenStrength(status);
 					}
-					writer.writeHomeTeamPlayerAdvantage("");
-					writer.writeAwayTeamPlayerAdvantage("");
+					banner.setHomeAdvantage("");
+					banner.setAwayAdvantage("");
 					break;
 				case "HOME":
-					writer.writeEvenStrengthPenaltyInfo("");
-					writer.writeHomeTeamPlayerAdvantage(status);
-					writer.writeAwayTeamPlayerAdvantage("");
+					banner.setEvenStrength("");
+					banner.setHomeAdvantage(status);
+					banner.setAwayAdvantage("");
 					break;
 				case "AWAY":
-					writer.writeEvenStrengthPenaltyInfo("");
-					writer.writeHomeTeamPlayerAdvantage("");
-					writer.writeAwayTeamPlayerAdvantage(status);
+					banner.setEvenStrength("");
+					banner.setHomeAdvantage("");
+					banner.setAwayAdvantage(status);
 					break;
-
 			}
-			writer.publishTimers();
 		}
 
 		private void setGameClockInformation() {
@@ -359,14 +359,14 @@ namespace Scoreboard {
 
 		private void HomeNameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 			homeTeam.name = HomeNameTextBox.Text;
-			writer.writeHomeTeamName(homeTeam.name);
+			banner.setHomeName(homeTeam.name);
 			DEBUG_LABEL.Text = "Home Team Name Changed: " + homeTeam.name;
 			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		private void HomeSubGoalButton_Click(object sender, RoutedEventArgs e) {
 			homeTeam.subtractGoal();
-			writer.writeHomeTeamScore(homeTeam.score);
+			banner.setHomeScore(homeTeam.score);
 			HomeScore.Text = homeTeam.score.ToString();
 			DEBUG_LABEL.Text = "Subtract Home Goal";
 			_log.Info(DEBUG_LABEL.Text);
@@ -374,7 +374,7 @@ namespace Scoreboard {
 
 		private void HomeAddGoalButton_Click(object sender, RoutedEventArgs e) {
 			homeTeam.addGoal();
-			writer.writeHomeTeamScore(homeTeam.score);
+			banner.setHomeScore(homeTeam.score);
 			HomeScore.Text = homeTeam.score.ToString();
 			DEBUG_LABEL.Text = "Add Home Goal";
 			_log.Info(DEBUG_LABEL.Text);
@@ -382,7 +382,7 @@ namespace Scoreboard {
 
 		private void HomeScore_TextChanged(object sender, TextChangedEventArgs e) {
 			homeTeam.setScore(HomeScore.Text);
-			writer.writeHomeTeamScore(homeTeam.score);
+			banner.setHomeScore(homeTeam.score);
 			HomeScore.Text = homeTeam.score.ToString();
 			DEBUG_LABEL.Text = "Set Home Score: " + HomeScore.Text;
 			_log.Debug(DEBUG_LABEL.Text);
@@ -464,14 +464,14 @@ namespace Scoreboard {
 
 		private void AwayNameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 			awayTeam.name = AwayNameTextBox.Text;
-			writer.writeAwayTeamName(awayTeam.name);
+			banner.setAwayName(awayTeam.name);
 			DEBUG_LABEL.Text = "Away Team Name Changed: " + awayTeam.name;
 			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		private void AwaySubGoalButton_Click(object sender, RoutedEventArgs e) {
 			awayTeam.subtractGoal();
-			writer.writeAwayTeamScore(awayTeam.score);
+			banner.setAwayScore(awayTeam.score);
 			AwayScore.Text = awayTeam.score.ToString();
 			DEBUG_LABEL.Text = "Subtract Away Goal";
 			_log.Debug(DEBUG_LABEL.Text);
@@ -479,7 +479,7 @@ namespace Scoreboard {
 
 		private void AwayAddGoalButton_Click(object sender, RoutedEventArgs e) {
 			awayTeam.addGoal();
-			writer.writeAwayTeamScore(awayTeam.score);
+			banner.setAwayScore(awayTeam.score);
 			AwayScore.Text = awayTeam.score.ToString();
 			DEBUG_LABEL.Text = "Add Away Goal";
 			_log.Info(DEBUG_LABEL.Text);
@@ -487,7 +487,7 @@ namespace Scoreboard {
 
 		private void AwayScore_TextChanged(object sender, TextChangedEventArgs e) {
 			awayTeam.setScore(AwayScore.Text);
-			writer.writeAwayTeamScore(awayTeam.score);
+			banner.setAwayScore(awayTeam.score);
 			AwayScore.Text = awayTeam.score.ToString();
 			DEBUG_LABEL.Text = "Set Away Score: " + HomeScore.Text;
 			_log.Info(DEBUG_LABEL.Text);

@@ -54,7 +54,7 @@ namespace Scoreboard {
 			string displayTime;
 			if (penalties.Count > 0) {
 				TimeSpan minimum = penalties.Min();
-				displayTime = timeSpanToPenaltyString(minimum);
+				displayTime = timeSpanToTimeString(minimum);
 			}
 			else {
 				displayTime = "";
@@ -63,7 +63,7 @@ namespace Scoreboard {
 			return displayTime;
 		}
 
-		public static string timeSpanToPenaltyString(TimeSpan penalty) {
+		public static string timeSpanToTimeString(TimeSpan penalty) {
 			string formattedString = "";
 			if (penalty.TotalMilliseconds != 0) {
 				formattedString += penalty.Minutes.ToString();

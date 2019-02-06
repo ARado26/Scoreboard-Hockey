@@ -15,7 +15,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\Users\aradosevic\Desktop\Projects\C#\Scoreboard\</PublishUrl>
+    <PublishUrl>C:\Users\aradosevic\Desktop\Published Projects\Scoreboard\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -95,8 +95,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GameInfoBanner.xaml.cs">
+      <DependentUpon>GameInfoBanner.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PenaltyAndTimeCalculator.cs" />
     <Compile Include="ScoreboardFileWriter.cs" />
+    <Page Include="GameInfoBanner.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Scoreboard.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -73,7 +73,7 @@ namespace Scoreboard.Tests {
 
 		[TestMethod()]
 		public void timeSpanToPenaltyStringTest() {
-			string t = PenaltyAndTimeCalculator.timeSpanToPenaltyString(new TimeSpan(0, 2, 0));
+			string t = PenaltyAndTimeCalculator.timeSpanToTimeString(new TimeSpan(0, 2, 0));
 			Assert.AreEqual("2:00", t);
 		}
 	}
