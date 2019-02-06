@@ -50,16 +50,12 @@ namespace Scoreboard.Tests {
 			t = PenaltyAndTimeCalculator.calculateTeamWithAdvantage(home, away);
 			Assert.AreEqual("NONE", t);
 
-			home.toggleGoaliePulled();
-			home.setPen1(new TimeSpan(0, 2, 0));
-			home.setPen2(new TimeSpan(0, 2, 0));
+			home.clearPen1();
+			home.clearPen2();
+			away.clearPen1();
+			away.clearPen2();
 			home.managePenalties();
-			away.toggleGoaliePulled();
-			away.setPen1(new TimeSpan(0, 2, 0));
-			away.setPen2(new TimeSpan(0, 2, 0));
 			away.managePenalties();
-			t = PenaltyAndTimeCalculator.calculateTeamWithAdvantage(home, away);
-			Assert.AreEqual("NONE", t);
 
 
 			home.setPen1(new TimeSpan(0, 2, 0));
@@ -93,11 +89,11 @@ namespace Scoreboard.Tests {
 			away.setPen2(new TimeSpan(0, 2, 0));
 			away.managePenalties();
 			t = PenaltyAndTimeCalculator.calculatePlayerAdvantage(home, away);
-			Assert.AreEqual("5 on 3", t);
+			Assert.AreEqual("2PP", t);
 
 			home.toggleGoaliePulled();
 			t = PenaltyAndTimeCalculator.calculatePlayerAdvantage(home, away);
-			Assert.AreEqual("6 on 3", t);
+			Assert.AreEqual("EN 2PP", t);
 		}
 
 		[TestMethod()]
