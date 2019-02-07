@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Scoreboard {
 	/// <summary>
@@ -19,6 +10,11 @@ namespace Scoreboard {
 	public partial class GameInfoBanner : Window {
 		public GameInfoBanner() {
 			InitializeComponent();
+			ClockBackground.Source = filepathToImage(@".\Images\Clock_Cell.png");
+			BitmapImage bmp = filepathToImage(@".\Images\Penalty_Cell.png");
+			EvenStrengthBackground.Source = bmp;
+			HomeAdvantageBackground.Source = bmp;
+			AwayAdvantageBackground.Source = bmp;
 		}
 
 		public void setTime(string time) {
@@ -73,6 +69,24 @@ namespace Scoreboard {
 			else {
 				AwayAdvantageBackground.Visibility = System.Windows.Visibility.Visible;
 			}
+		}
+
+		private BitmapImage filepathToImage(string filepath) {
+			string fullpath = Path.GetFullPath(filepath);
+			Uri uriPath = new Uri(fullpath);
+			BitmapImage bmp = new BitmapImage(uriPath);
+			if (imageHasCorrectDimensions(bmp)) {
+				return bmp;
+			}
+			else {
+				return null;
+			}
+		}
+
+		private bool imageHasCorrectDimensions(BitmapImage bmp) {
+			double desiredAspect = 5;
+			double imgAspect = (double)bmp.PixelWidth / (double)bmp.PixelHeight;
+			return desiredAspect == imgAspect;
 		}
 	}
 }

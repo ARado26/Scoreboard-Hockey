@@ -13,6 +13,12 @@ namespace Scoreboard {
 			period = "PG";
 		}
 
+		public void fromJson(string json) {
+			GameInfo saved = JsonConvert.DeserializeObject<GameInfo>(json);
+			gameTime = saved.gameTime;
+			period = saved.period;
+		}
+
 		public void setGameTime(TimeSpan time) {
 			gameTime = time;
 		}

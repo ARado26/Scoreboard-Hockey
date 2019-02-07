@@ -23,6 +23,10 @@ namespace Scoreboard.Tests {
 			a = new HockeyTeam("a");
 		}
 
+		[TestCleanup()]
+		public void cleanup() {
+			t.Dispose();
+		}
 
 		[TestMethod()]
 		public void GameTimerTest() {

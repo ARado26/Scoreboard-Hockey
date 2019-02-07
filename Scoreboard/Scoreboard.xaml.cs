@@ -8,7 +8,7 @@ using log4net.Config;
 using Microsoft.Win32;
 using System.IO;
 using System.Windows.Media.Imaging;
-
+using System.Collections.Generic;
 
 namespace Scoreboard {
 	using calculator = PenaltyAndTimeCalculator;
@@ -30,6 +30,9 @@ namespace Scoreboard {
 		private GameTimer timer { get; set; }
 		private int refreshes = 0;
 		private const int REFRESH_INTERVAL = 10;
+		private const string GAME_INFO = @".\GameInfo.sb";
+		private const string HOME_TEAM = @".\HomeTeam.sb";
+		private const string AWAY_TEAM = @".\AwayTeam.sb";
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 		
@@ -39,28 +42,75 @@ namespace Scoreboard {
 			XmlConfigurator.Configure();
 			initData();
             InitializeComponent();
-			initInterfaceAndRelatedData();
+			initFileData();
 		}
 
 		public void initData() {
 			banner = new GameInfoBanner();
 			gameInfo = new GameInfo();
-			homeTeam = new HockeyTeam("HOME");
-			awayTeam = new HockeyTeam("AWAY");
+			homeTeam = new HockeyTeam("HOME") {
+				imagePath = @"./Images/Home_Cell_Specular.png"
+			};
+			awayTeam = new HockeyTeam("AWAY") {
+				imagePath = @"./Images/Away_Cell_Specular.png"
+			};
 			timer = new GameTimer(REFRESH_INTERVAL);
 			
 			_log.Info("Initializing Data");
 		}
 
+		public void readGameDataFromFiles() {
+			if (File.Exists(GAME_INFO)) {
+				string saved = File.ReadAllText(GAME_INFO);
+				gameInfo.fromJson(saved);
+			}
+			if (File.Exists(HOME_TEAM)) {
+				string saved = File.ReadAllText(HOME_TEAM);
+				homeTeam.fromJson(saved);
+			}
+			if (File.Exists(AWAY_TEAM)) {
+				string saved = File.ReadAllText(AWAY_TEAM);
+				awayTeam.fromJson(saved);
+			}
+		}
+
+		public void writeGameDataToFiles() {
+			List<string> paths = new List<string> {
+				GAME_INFO,
+				HOME_TEAM,
+				AWAY_TEAM
+			};
+			foreach (string path in paths) {
+				if (!File.Exists(path)) {
+					FileStream f = File.Create(path);
+					f.Close();
+				}
+			}
+			File.WriteAllText(GAME_INFO, gameInfo.logInfo());
+			File.WriteAllText(HOME_TEAM, homeTeam.logInfo());
+			File.WriteAllText(AWAY_TEAM, awayTeam.logInfo());
+		}
+
+		public void initFileData() {
+			readGameDataFromFiles();
+
+			string p = gameInfo.period;
+
+			initInterfaceAndRelatedData();
+
+			gameInfo.setPeriod(p);
+			banner.setPeriod(p);
+			GamePeriod.Text = p;
+		}
+
 		public void initInterfaceAndRelatedData() {
 			timer.TimeStopped += HandleTimeStoppage;
 			timer.Refresh += HandleRefresh;
-			
+
 			timer.setTimerFields(gameInfo, homeTeam, awayTeam);
-			
-			GameClockMinutes.Text = gameInfo.gameTime.Minutes.ToString();
-			string s = gameInfo.gameTime.Seconds.ToString();
-			GameClockSeconds.Text = (s.Length > 1 ? s : '0' + s);
+			setGameClockInformation();
+			setPenaltyInformation();
+
 			GamePeriodPicker.SelectedIndex = 0;
 
 			HomeNameTextBox.Text = homeTeam.name;
@@ -72,20 +122,31 @@ namespace Scoreboard {
 			ClockToggleButton.Content = "Start";
 			clockState = CLOCK_STATES.STOPPED;
 
-			HomeGoaliePulled.IsChecked = false;
-			AwayGoaliePulled.IsChecked = false;
-
-			homeTeam.goaliePulled = false;
-			awayTeam.goaliePulled = false;
+			bool hGoaliePulled = homeTeam.goaliePulled;
+			bool aGoaliePulled = awayTeam.goaliePulled;
+			HomeGoaliePulled.IsChecked = hGoaliePulled;
+			AwayGoaliePulled.IsChecked = aGoaliePulled;
+			homeTeam.goaliePulled = hGoaliePulled;
+			awayTeam.goaliePulled = aGoaliePulled;
+			calculateAndSetTimers();
 
 			DEBUG_LABEL.Text = "DEBUG";
 
-			setPenaltyInformation();
-			banner.Show();
-			banner.Activate();
-
+			BitmapImage bmp = filepathToImage(homeTeam.imagePath);
+			if (bmp != null) {
+				banner.HomeBackground.Source = bmp;
+			}
+			bmp = filepathToImage(awayTeam.imagePath);
+			if (bmp != null) {
+				banner.AwayBackground.Source = bmp;
+			}
 			HomeImage.Source = banner.HomeBackground.Source;
 			AwayImage.Source = banner.AwayBackground.Source;
+
+
+			banner.Show();
+			banner.Activate();
+			
 
 			_log.Info("Initializing UI and Relevant Data");
 		}
@@ -110,6 +171,24 @@ namespace Scoreboard {
 			return penaltyTime;
 		}
 
+		private BitmapImage filepathToImage(string filepath) {
+			string fullpath = Path.GetFullPath(filepath);
+			Uri uriPath = new Uri(fullpath);
+			BitmapImage bmp = new BitmapImage(uriPath);
+			if (imageHasCorrectDimensions(bmp)) {
+				return bmp;
+			}
+			else {
+				return null;
+			}
+		}
+
+		private bool imageHasCorrectDimensions(BitmapImage bmp) {
+			double desiredAspect = 5;
+			double imgAspect = (double)bmp.PixelWidth / (double)bmp.PixelHeight;
+			return desiredAspect == imgAspect;
+		}
+
 		private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			ClockToggleButton.Focus();
 			DEBUG_LABEL.Text = "Press ENTER to toggle clock";
@@ -119,6 +198,7 @@ namespace Scoreboard {
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			timer.Dispose();
 			banner.Close();
+			writeGameDataToFiles();
 			_log.Info("Exiting");
 		}
 
@@ -144,7 +224,7 @@ namespace Scoreboard {
 
 		private void GamePeriodPicker_SelectionChanged(object sender, SelectionChangedEventArgs e){
 			string period = ((ComboBoxItem)GamePeriodPicker.SelectedItem).Content.ToString();
-			gameInfo.setPeriod(gameInfo.period);
+			gameInfo.setPeriod(period);
 			banner.setPeriod(period);
 			GamePeriod.Text = period;
 			DEBUG_LABEL.Text = "Period Set: " + GamePeriod.Text;
@@ -161,6 +241,8 @@ namespace Scoreboard {
 		private void ResetAllButton_Click(object sender, RoutedEventArgs e) {
 			DEBUG_LABEL.Text = "Reset All Fields";
 			_log.Info(DEBUG_LABEL.Text);
+			timer.Dispose();
+			banner.Close();
 			initData();
 			initInterfaceAndRelatedData();
 		}
@@ -470,18 +552,19 @@ namespace Scoreboard {
 		}
 
 		private void HomeImageButton_Click(object sender, RoutedEventArgs e) {
-			OpenFileDialog dlg = new OpenFileDialog();
-			dlg.Filter = "Image Files(*PNG;*.BMP;*.JPG;*.GIF)|*PNG;*.BMP;*.JPG;*.GIF|All files (*.*)|*.*"; 
+			OpenFileDialog dlg = new OpenFileDialog {
+				Filter = "Image Files(*PNG;*.BMP;*.JPG;*.GIF)|*PNG;*.BMP;*.JPG;*.GIF|All files (*.*)|*.*"
+			};
 
 			Nullable<bool> result = dlg.ShowDialog();
 
 			if (result == true) {
 				string filename = dlg.FileName;
-				Uri uriPath = new Uri(filename);
-				BitmapImage bmp = new BitmapImage(uriPath);
-				if (bmp.PixelWidth==800 && bmp.PixelHeight == 160) {
+				BitmapImage bmp = filepathToImage(filename);
+				if (bmp != null) {
 					HomeImage.Source = bmp;
 					banner.HomeBackground.Source = bmp;
+					homeTeam.imagePath = filename;
 					DEBUG_LABEL.Text = "New Home Image: " + Path.GetFileName(filename);
 				}
 				else {
@@ -599,18 +682,19 @@ namespace Scoreboard {
 		}
 
 		private void AwayImageButton_Click(object sender, RoutedEventArgs e) {
-			OpenFileDialog dlg = new OpenFileDialog();
-			dlg.Filter = "Image Files(*PNG;*.BMP;*.JPG;*.GIF)|*PNG;*.BMP;*.JPG;*.GIF|All files (*.*)|*.*";
+			OpenFileDialog dlg = new OpenFileDialog {
+				Filter = "Image Files(*PNG;*.BMP;*.JPG;*.GIF)|*PNG;*.BMP;*.JPG;*.GIF|All files (*.*)|*.*"
+			};
 
 			Nullable<bool> result = dlg.ShowDialog();
 
 			if (result == true) {
 				string filename = dlg.FileName;
-				Uri uriPath = new Uri(filename);
-				BitmapImage bmp = new BitmapImage(uriPath);
-				if (bmp.PixelWidth == 800 && bmp.PixelHeight == 160) {
+				BitmapImage bmp = filepathToImage(filename);
+				if (bmp != null) {
 					AwayImage.Source = bmp;
 					banner.AwayBackground.Source = bmp;
+					awayTeam.imagePath = filename;
 					DEBUG_LABEL.Text = "New Away Image: " + Path.GetFileName(filename);
 				}
 				else {
