@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace Scoreboard {
@@ -8,6 +9,10 @@ namespace Scoreboard {
 	/// Interaction logic for GameInfoBanner.xaml
 	/// </summary>
 	public partial class GameInfoBanner : Window {
+
+		private int homeColumn;
+		private int awayColumn;
+
 		public GameInfoBanner() {
 			InitializeComponent();
 			ClockBackground.Source = filepathToImage(@".\Images\Clock_Cell.png");
@@ -15,6 +20,8 @@ namespace Scoreboard {
 			EvenStrengthBackground.Source = bmp;
 			HomeAdvantageBackground.Source = bmp;
 			AwayAdvantageBackground.Source = bmp;
+			homeColumn = 0;
+			awayColumn = 2;
 		}
 
 		public void setTime(string time) {
@@ -71,6 +78,18 @@ namespace Scoreboard {
 			}
 		}
 
+		public void swapBannerPositions() {
+			Grid.SetColumn(HomeBackground, awayColumn);
+			Grid.SetColumn(HomeGrid, awayColumn);
+			Grid.SetColumn(HomeAdvGrid, awayColumn);
+			Grid.SetColumn(AwayBackground, homeColumn);
+			Grid.SetColumn(AwayGrid, homeColumn);
+			Grid.SetColumn(AwayAdvGrid, homeColumn);
+			int tmp = homeColumn;
+			homeColumn = awayColumn;
+			awayColumn = tmp;
+		}
+
 		private BitmapImage filepathToImage(string filepath) {
 			string fullpath = Path.GetFullPath(filepath);
 			Uri uriPath = new Uri(fullpath);
@@ -88,5 +107,6 @@ namespace Scoreboard {
 			double imgAspect = (double)bmp.PixelWidth / (double)bmp.PixelHeight;
 			return desiredAspect == imgAspect;
 		}
+
 	}
 }

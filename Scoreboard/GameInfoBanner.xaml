@@ -26,7 +26,7 @@
 		</Grid.RowDefinitions>
 
 		<Image x:Name="HomeBackground" />
-		<Grid>
+		<Grid x:Name="HomeGrid">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="100"/>
 				<ColumnDefinition />
@@ -48,7 +48,7 @@
 		</Grid>
 
 		<Image x:Name="AwayBackground" Grid.Column="2" />
-		<Grid Grid.Column="2">
+		<Grid x:Name="AwayGrid" Grid.Column="2">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="100"/>
 				<ColumnDefinition />
@@ -58,7 +58,7 @@
 			<TextBlock x:Name="AwayScore" Grid.Column="2" TextWrapping="NoWrap" Text="0" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="White"/>
 		</Grid>
 
-		<Grid Grid.Row="1">
+		<Grid x:Name="HomeAdvGrid" Grid.Row="1">
 			<Image x:Name="HomeAdvantageBackground" Stretch="Fill" Source=".\Images\Penalty_Cell.png" Visibility="Hidden"/>
 			<TextBlock x:Name="HomeAdvantage" TextWrapping="NoWrap" Text="PP 2:00" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
 		</Grid>
@@ -67,7 +67,7 @@
 		<Image x:Name="EvenStrengthBackground" Grid.Column="1" Grid.Row="1" Source=".\Images\Penalty_Cell.png" Visibility="Hidden"/>
 		<TextBlock x:Name="EvenStrength" Grid.Column="1" Grid.Row="1" TextWrapping="NoWrap" Text="4 on 4 2:00" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
 
-		<Grid Grid.Column="2" Grid.Row="1">
+		<Grid x:Name="AwayAdvGrid" Grid.Column="2" Grid.Row="1">
 			<Image x:Name="AwayAdvantageBackground" Stretch="Fill" Source=".\Images\Penalty_Cell.png" Visibility="Hidden"/>
 			<TextBlock x:Name="AwayAdvantage"  TextWrapping="NoWrap" Text="Empty Net" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
 		</Grid>

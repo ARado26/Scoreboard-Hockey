@@ -179,8 +179,12 @@
 
 			</Grid>
 			<Grid Grid.Row="3" Grid.ColumnSpan="2">
-				<Button x:Name="ResetAllButton"  Content="Reset All" Margin="10,30" Click="ResetAllButton_Click"/>
-
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+				<Button x:Name="ResetAllButton"  Content="Reset All" Margin="10" Click="ResetAllButton_Click"/>
+				<Button x:Name="ReverseButton" Grid.Row="2"  Content="Swap Graphics Positions" Margin="10" Click="ReverseButton_Click" />
 			</Grid>
 
 			<Grid Grid.Row="4" Grid.ColumnSpan="2">

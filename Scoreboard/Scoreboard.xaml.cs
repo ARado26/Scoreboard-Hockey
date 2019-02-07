@@ -143,6 +143,9 @@ namespace Scoreboard {
 			HomeImage.Source = banner.HomeBackground.Source;
 			AwayImage.Source = banner.AwayBackground.Source;
 
+			if (gameInfo.reversedBanner) {
+				banner.swapBannerPositions();
+			}
 
 			banner.Show();
 			banner.Activate();
@@ -702,6 +705,11 @@ namespace Scoreboard {
 				}
 
 			}
+		}
+
+		private void ReverseButton_Click(object sender, RoutedEventArgs e) {
+			banner.swapBannerPositions();
+			gameInfo.reversedBanner = !gameInfo.reversedBanner;
 		}
 	}
 }
