@@ -273,7 +273,7 @@
 					<RowDefinition/>
 					<RowDefinition Height="2*"/>
 				</Grid.RowDefinitions>
-				<Label Grid.Row="0" Content="Home Penalties in Queue: " Margin="20,0,-20,0" VerticalAlignment="Center"/>
+				<Label Grid.Row="0" Content="Away Penalties in Queue: " Margin="20,0,-20,0" VerticalAlignment="Center"/>
 				<Label x:Name="AwayPenaltiesQueued" Grid.Row="0"  Content="0" Margin="161,0,0,0" VerticalAlignment="Center"/>
 				<CheckBox x:Name="AwayGoaliePulled" Grid.Row="1" Content="Goalie Pulled" Margin="20,0,0,0" Checked="AwayGoaliePulled_Checked" Unchecked="AwayGoaliePulled_Unchecked" VerticalAlignment="Center" />
 
