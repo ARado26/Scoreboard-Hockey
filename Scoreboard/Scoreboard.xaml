@@ -12,7 +12,8 @@
 		ResizeMode="NoResize" 
 		MouseDoubleClick="Window_MouseDoubleClick"
 		Closing="Window_Closing"
-		Topmost="False"
+		Topmost="False" 
+		Icon="ScoreboardIcon.ico"
 		>
 	<Grid x:Name="MainGrid" >
 		<Grid.ColumnDefinitions>
@@ -113,7 +114,6 @@
 					<!--<Label x:Name="HomeImageName" VerticalContentAlignment="Center" Content="filename" Width="178" Margin="20,5,0,20"/>-->
 					<Image x:Name="HomeImage" Stretch="Fill" Margin="20,5,0,20" />
 					<Button x:Name="HomeImageButton" Grid.Column="1" Content="Browse" Margin="5,5,5,20" Click="HomeImageButton_Click"/>
-
 				</Grid>
 			</Grid>
 		</Grid>
