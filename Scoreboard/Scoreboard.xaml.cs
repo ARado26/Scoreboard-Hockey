@@ -33,6 +33,8 @@ namespace Scoreboard {
 		private const string GAME_INFO = @".\GameInfo.sb";
 		private const string HOME_TEAM = @".\HomeTeam.sb";
 		private const string AWAY_TEAM = @".\AwayTeam.sb";
+		private int homeColumn;
+		private int awayColumn;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 		
@@ -55,6 +57,9 @@ namespace Scoreboard {
 				imagePath = @"./Images/Away_Cell_Specular.png"
 			};
 			timer = new GameTimer(REFRESH_INTERVAL);
+
+			homeColumn = 0;
+			awayColumn = 2;
 			
 			_log.Info("Initializing Data");
 		}
@@ -144,6 +149,7 @@ namespace Scoreboard {
 			AwayImage.Source = banner.AwayBackground.Source;
 
 			if (gameInfo.reversedBanner) {
+				swapTeamGrids();
 				banner.swapBannerPositions();
 			}
 
@@ -248,6 +254,12 @@ namespace Scoreboard {
 			banner.Close();
 			initData();
 			initInterfaceAndRelatedData();
+		}
+
+		private void ReverseButton_Click(object sender, RoutedEventArgs e) {
+			swapTeamGrids();
+			banner.swapBannerPositions();
+			gameInfo.reversedBanner = !gameInfo.reversedBanner;
 		}
 
 		private void HandleTimeStoppage(object sender, TimerEventArgs e) {
@@ -438,6 +450,14 @@ namespace Scoreboard {
 
 			DEBUG_LABEL.Text = "Toggle Clock Mode: " + clockState;
 			_log.Debug(DEBUG_LABEL.Text);
+		}
+
+		private void swapTeamGrids() {
+			Grid.SetColumn(HomeTeamGrid, awayColumn);
+			Grid.SetColumn(AwayTeamGrid, homeColumn);
+			int tmp = homeColumn;
+			homeColumn = awayColumn;
+			awayColumn = tmp;
 		}
 
 		// small decimal differences inspire creation of phantom penalties
@@ -707,9 +727,6 @@ namespace Scoreboard {
 			}
 		}
 
-		private void ReverseButton_Click(object sender, RoutedEventArgs e) {
-			banner.swapBannerPositions();
-			gameInfo.reversedBanner = !gameInfo.reversedBanner;
-		}
+		
 	}
 }
