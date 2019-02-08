@@ -11,7 +11,9 @@ Added Features:
 - game and team information written and read from file on close and start respectively
 - more accurate display of time (OBS reading text files adds about a 1s delay)
 
-## Scoreboard v1.0.0
+Development on this version located in the banner branch. When changes are necessary, master will be updated from this version.
+
+## Scoreboard v1.0.1
 
 Scoreboard is designed to be used in tandem with OBS or other streaming software to display game information for an ice hockey game. This version of scoreboard writes text files for the streaming software to read then display.
 
@@ -26,4 +28,4 @@ Text files are written for the following information:
 - Away Team Score
 - Away Team Player Advantage and Time
 
-In a future release, the program will generate a separate window for OBS or other streaming software to capture directly.
+The text file version of Scoreboard will be supported via the textfiles branch.
