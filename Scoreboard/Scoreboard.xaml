@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Scoreboard"
         mc:Ignorable="d"
         Title="Scoreboard"
-        Height="600"
+        Height="550"
         Width="950"
         Background="LightGray" 
 		ResizeMode="NoResize" 
@@ -99,22 +99,11 @@
 				<Grid.RowDefinitions>
 					<RowDefinition/>
 					<RowDefinition/>
-					<RowDefinition Height="2*"/>
 				</Grid.RowDefinitions>
 				<Label Grid.Row="0" Content="Home Penalties in Queue: " Margin="20,0,-20,0" VerticalAlignment="Center"/>
 				<Label x:Name="HomePenaltiesQueued" Grid.Row="0"  Content="0" Margin="161,0,0,0" VerticalAlignment="Center"/>
 				<CheckBox x:Name="HomeGoaliePulled" Grid.Row="1" Content="Goalie Pulled" Margin="20,0,0,0" Checked="HomeGoaliePulled_Checked" Unchecked="HomeGoaliePulled_Unchecked" VerticalAlignment="Center" />
 
-				<Grid Grid.Row="2">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="5*"/>
-						<ColumnDefinition Width="3*"/>
-					</Grid.ColumnDefinitions>
-					<!--<Label x:Name="HomeImageName" VerticalContentAlignment="Center" Content="filename" Width="178" Margin="20,5,0,20"/>-->
-					<Image x:Name="HomeImage" Stretch="Fill" Margin="20,5,0,20" />
-					<Button x:Name="HomeImageButton" Grid.Column="1" Content="Browse" Margin="5,5,5,20" Click="HomeImageButton_Click"/>
-
-				</Grid>
 			</Grid>
 		</Grid>
 
@@ -271,21 +260,10 @@
 				<Grid.RowDefinitions>
 					<RowDefinition/>
 					<RowDefinition/>
-					<RowDefinition Height="2*"/>
 				</Grid.RowDefinitions>
 				<Label Grid.Row="0" Content="Away Penalties in Queue: " Margin="20,0,-20,0" VerticalAlignment="Center"/>
 				<Label x:Name="AwayPenaltiesQueued" Grid.Row="0"  Content="0" Margin="161,0,0,0" VerticalAlignment="Center"/>
 				<CheckBox x:Name="AwayGoaliePulled" Grid.Row="1" Content="Goalie Pulled" Margin="20,0,0,0" Checked="AwayGoaliePulled_Checked" Unchecked="AwayGoaliePulled_Unchecked" VerticalAlignment="Center" />
-
-				<Grid Grid.Row="2">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="5*"/>
-						<ColumnDefinition Width="3*"/>
-					</Grid.ColumnDefinitions>
-					<!--<Label x:Name="AwayImageName"  VerticalContentAlignment="Center" Content="filename" Width="178" Margin="20,5,0,20"/>-->
-					<Image x:Name="AwayImage" Stretch="Fill" Margin="20,5,0,20" />
-					<Button x:Name="AwayImageButton" Grid.Column="1" Content="Browse" Margin="5,5,5,20" Click="AwayImageButton_Click"/>
-				</Grid>
 
 			</Grid>
 		</Grid>

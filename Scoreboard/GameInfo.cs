@@ -6,20 +6,20 @@ namespace Scoreboard {
     {
 		public TimeSpan gameTime { get; set; }
 		public string period { get; set; }
-		public bool reversedBanner { get; set; }
+		public bool reversedGrids { get; set; }
 		
 
 		public GameInfo() {
 			gameTime = new TimeSpan();
 			period = "PG";
-			reversedBanner = false;
+			reversedGrids = false;
 		}
 
 		public void fromJson(string json) {
 			GameInfo saved = JsonConvert.DeserializeObject<GameInfo>(json);
 			gameTime = saved.gameTime;
 			period = saved.period;
-			reversedBanner = saved.reversedBanner;
+			reversedGrids = saved.reversedGrids;
 		}
 
 		public void setGameTime(TimeSpan time) {

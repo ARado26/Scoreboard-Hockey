@@ -14,7 +14,6 @@ namespace Scoreboard {
 		public TimeSpan penalty1 { get; set; }
 		public TimeSpan penalty2 { get; set; }
 		public Boolean goaliePulled { get; set; }
-		public string imagePath { get; set; }
 
 		public HockeyTeam(String teamName) {
 			name = teamName;
@@ -24,7 +23,6 @@ namespace Scoreboard {
 			penalty1 = new TimeSpan();
 			penalty2 = new TimeSpan();
 			goaliePulled = false;
-			imagePath = @".\Images\Home_Cell_Specular.png";
 		}
 
 		public void fromJson(string json) {
@@ -36,7 +34,6 @@ namespace Scoreboard {
 			penalty1 = saved.penalty1;
 			penalty2 = saved.penalty2;
 			goaliePulled = saved.goaliePulled;
-			imagePath = saved.imagePath;
 		}
 
 		public void addGoal() {

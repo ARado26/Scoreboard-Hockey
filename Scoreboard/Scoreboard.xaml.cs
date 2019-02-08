@@ -18,14 +18,13 @@ namespace Scoreboard {
 	/// </summary>
 	public partial class MainWindow : Window
     {
-
-		public GameInfoBanner banner;
-
+	
 		public HockeyTeam homeTeam { get; set; }
 		public HockeyTeam awayTeam { get; set; }
 		public GameInfo gameInfo { get; set; }
 		public enum CLOCK_STATES{ STOPPED, RUNNING }
 		public CLOCK_STATES clockState;
+		public ScoreboardFileWriter writer;
 
 		private GameTimer timer { get; set; }
 		private int refreshes = 0;
@@ -48,14 +47,10 @@ namespace Scoreboard {
 		}
 
 		public void initData() {
-			banner = new GameInfoBanner();
 			gameInfo = new GameInfo();
-			homeTeam = new HockeyTeam("HOME") {
-				imagePath = @"./Images/Home_Cell_Specular.png"
-			};
-			awayTeam = new HockeyTeam("AWAY") {
-				imagePath = @"./Images/Away_Cell_Specular.png"
-			};
+			homeTeam = new HockeyTeam("HOME");
+			awayTeam = new HockeyTeam("AWAY");
+			writer = new ScoreboardFileWriter(@"./TextFiles/");
 			timer = new GameTimer(REFRESH_INTERVAL);
 
 			homeColumn = 0;
@@ -104,7 +99,7 @@ namespace Scoreboard {
 			initInterfaceAndRelatedData();
 
 			gameInfo.setPeriod(p);
-			banner.setPeriod(p);
+			writer.writePeriod(p);
 			GamePeriod.Text = p;
 		}
 
@@ -136,27 +131,13 @@ namespace Scoreboard {
 			calculateAndSetTimers();
 
 			DEBUG_LABEL.Text = "DEBUG";
-
-			BitmapImage bmp = filepathToImage(homeTeam.imagePath);
-			if (bmp != null) {
-				banner.HomeBackground.Source = bmp;
-			}
-			bmp = filepathToImage(awayTeam.imagePath);
-			if (bmp != null) {
-				banner.AwayBackground.Source = bmp;
-			}
-			HomeImage.Source = banner.HomeBackground.Source;
-			AwayImage.Source = banner.AwayBackground.Source;
-
-			if (gameInfo.reversedBanner) {
-				swapTeamGrids();
-				banner.swapBannerPositions();
-			}
-
-			banner.Show();
-			banner.Activate();
 			
 
+			if (gameInfo.reversedGrids) {
+				swapTeamGrids();
+			}
+
+			
 			_log.Info("Initializing UI and Relevant Data");
 		}
 			
@@ -206,7 +187,6 @@ namespace Scoreboard {
 
 		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
 			timer.Dispose();
-			banner.Close();
 			writeGameDataToFiles();
 			_log.Info("Exiting");
 		}
@@ -234,7 +214,7 @@ namespace Scoreboard {
 		private void GamePeriodPicker_SelectionChanged(object sender, SelectionChangedEventArgs e){
 			string period = ((ComboBoxItem)GamePeriodPicker.SelectedItem).Content.ToString();
 			gameInfo.setPeriod(period);
-			banner.setPeriod(period);
+			writer.writePeriod(period);
 			GamePeriod.Text = period;
 			DEBUG_LABEL.Text = "Period Set: " + GamePeriod.Text;
 			_log.Debug(DEBUG_LABEL.Text);
@@ -242,7 +222,7 @@ namespace Scoreboard {
 
 		private void GamePeriodSetter_Click(object sender, RoutedEventArgs e) {
 			gameInfo.setPeriod(GamePeriod.Text);
-			banner.setPeriod(gameInfo.period);
+			writer.writePeriod(GamePeriod.Text);
 			DEBUG_LABEL.Text = "Period Set: " + GamePeriod.Text;
 			_log.Debug(DEBUG_LABEL.Text);
 		}
@@ -251,15 +231,13 @@ namespace Scoreboard {
 			DEBUG_LABEL.Text = "Reset All Fields";
 			_log.Info(DEBUG_LABEL.Text);
 			timer.Dispose();
-			banner.Close();
 			initData();
 			initInterfaceAndRelatedData();
 		}
 
 		private void ReverseButton_Click(object sender, RoutedEventArgs e) {
 			swapTeamGrids();
-			banner.swapBannerPositions();
-			gameInfo.reversedBanner = !gameInfo.reversedBanner;
+			gameInfo.reversedGrids = !gameInfo.reversedGrids;
 		}
 
 		private void HandleTimeStoppage(object sender, TimerEventArgs e) {
@@ -398,7 +376,7 @@ namespace Scoreboard {
 		}
 
 		private void calculateAndSetTimers() {
-			banner.setTime(gameInfo.getFormattedGameTime());
+			writer.writeGameClock(gameInfo.getFormattedGameTime());
 			string teamWithAdvantage = calculator.calculateTeamWithAdvantage(homeTeam, awayTeam);
 			string time = calculator.calculateTimeToDisplay(homeTeam, awayTeam);
 			string homeStatus = calculator.calculatePlayerAdvantage(homeTeam, awayTeam);
@@ -407,23 +385,23 @@ namespace Scoreboard {
 				case "NONE":
 					string status = calculator.calculateEvenStrength(homeTeam, awayTeam);
 					if(status != "") {
-						banner.setEvenStrength(status + " " + time);
+						writer.writeEvenStrengthPenaltyInfo(status + " " + time);
 					}
 					else {
-						banner.setEvenStrength(status);
+						writer.writeEvenStrengthPenaltyInfo(status);
 					}
-					banner.setHomeAdvantage(homeStatus);
-					banner.setAwayAdvantage(awayStatus);
+					writer.writeHomeTeamPlayerAdvantage(homeStatus);
+					writer.writeAwayTeamPlayerAdvantage(awayStatus);
 					break;
 				case "HOME":
-					banner.setEvenStrength("");
-					banner.setHomeAdvantage(homeStatus + " " + time);
-					banner.setAwayAdvantage(awayStatus);
+					writer.writeEvenStrengthPenaltyInfo("");
+					writer.writeHomeTeamPlayerAdvantage(homeStatus + " " + time);
+					writer.writeAwayTeamPlayerAdvantage(awayStatus);
 					break;
 				case "AWAY":
-					banner.setEvenStrength("");
-					banner.setHomeAdvantage(homeStatus);
-					banner.setAwayAdvantage(awayStatus + " " + time);
+					writer.writeEvenStrengthPenaltyInfo("");
+					writer.writeHomeTeamPlayerAdvantage(homeStatus);
+					writer.writeAwayTeamPlayerAdvantage(awayStatus + " " + time);
 					break;
 			}
 		}
@@ -473,14 +451,14 @@ namespace Scoreboard {
 
 		private void HomeNameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 			homeTeam.name = HomeNameTextBox.Text;
-			banner.setHomeName(homeTeam.name);
+			writer.writeHomeTeamName(homeTeam.name);
 			DEBUG_LABEL.Text = "Home Team Name Changed: " + homeTeam.name;
 			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		private void HomeSubGoalButton_Click(object sender, RoutedEventArgs e) {
 			homeTeam.subtractGoal();
-			banner.setHomeScore(homeTeam.score);
+			writer.writeHomeTeamScore(homeTeam.score);
 			HomeScore.Text = homeTeam.score.ToString();
 			DEBUG_LABEL.Text = "Subtract Home Goal";
 			_log.Info(DEBUG_LABEL.Text);
@@ -488,7 +466,7 @@ namespace Scoreboard {
 
 		private void HomeAddGoalButton_Click(object sender, RoutedEventArgs e) {
 			homeTeam.addGoal();
-			banner.setHomeScore(homeTeam.score);
+			writer.writeHomeTeamScore(homeTeam.score);
 			HomeScore.Text = homeTeam.score.ToString();
 			DEBUG_LABEL.Text = "Add Home Goal";
 			_log.Info(DEBUG_LABEL.Text);
@@ -496,7 +474,7 @@ namespace Scoreboard {
 
 		private void HomeScore_TextChanged(object sender, TextChangedEventArgs e) {
 			homeTeam.setScore(HomeScore.Text);
-			banner.setHomeScore(homeTeam.score);
+			writer.writeHomeTeamScore(homeTeam.score);
 			HomeScore.Text = homeTeam.score.ToString();
 			DEBUG_LABEL.Text = "Set Home Score: " + HomeScore.Text;
 			_log.Debug(DEBUG_LABEL.Text);
@@ -574,43 +552,20 @@ namespace Scoreboard {
 			_log.Info(DEBUG_LABEL.Text);
 		}
 
-		private void HomeImageButton_Click(object sender, RoutedEventArgs e) {
-			OpenFileDialog dlg = new OpenFileDialog {
-				Filter = "Image Files(*PNG;*.BMP;*.JPG;*.GIF)|*PNG;*.BMP;*.JPG;*.GIF|All files (*.*)|*.*"
-			};
-
-			Nullable<bool> result = dlg.ShowDialog();
-
-			if (result == true) {
-				string filename = dlg.FileName;
-				BitmapImage bmp = filepathToImage(filename);
-				if (bmp != null) {
-					HomeImage.Source = bmp;
-					banner.HomeBackground.Source = bmp;
-					homeTeam.imagePath = filename;
-					DEBUG_LABEL.Text = "New Home Image: " + Path.GetFileName(filename);
-				}
-				else {
-					DEBUG_LABEL.Text = "Selected File Does not have compatible dimensions";
-				}
-				
-			}
-		}
-
 		//=================================================
 		// Away Team Methods
 		//=================================================
 
 		private void AwayNameTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 			awayTeam.name = AwayNameTextBox.Text;
-			banner.setAwayName(awayTeam.name);
+			writer.writeAwayTeamName(awayTeam.name);
 			DEBUG_LABEL.Text = "Away Team Name Changed: " + awayTeam.name;
 			_log.Debug(DEBUG_LABEL.Text);
 		}
 
 		private void AwaySubGoalButton_Click(object sender, RoutedEventArgs e) {
 			awayTeam.subtractGoal();
-			banner.setAwayScore(awayTeam.score);
+			writer.writeAwayTeamScore(awayTeam.score);
 			AwayScore.Text = awayTeam.score.ToString();
 			DEBUG_LABEL.Text = "Subtract Away Goal";
 			_log.Debug(DEBUG_LABEL.Text);
@@ -618,7 +573,7 @@ namespace Scoreboard {
 
 		private void AwayAddGoalButton_Click(object sender, RoutedEventArgs e) {
 			awayTeam.addGoal();
-			banner.setAwayScore(awayTeam.score);
+			writer.writeAwayTeamScore(awayTeam.score);
 			AwayScore.Text = awayTeam.score.ToString();
 			DEBUG_LABEL.Text = "Add Away Goal";
 			_log.Info(DEBUG_LABEL.Text);
@@ -626,7 +581,7 @@ namespace Scoreboard {
 
 		private void AwayScore_TextChanged(object sender, TextChangedEventArgs e) {
 			awayTeam.setScore(AwayScore.Text);
-			banner.setAwayScore(awayTeam.score);
+			writer.writeAwayTeamScore(awayTeam.score);
 			AwayScore.Text = awayTeam.score.ToString();
 			DEBUG_LABEL.Text = "Set Away Score: " + HomeScore.Text;
 			_log.Info(DEBUG_LABEL.Text);
@@ -702,29 +657,6 @@ namespace Scoreboard {
 			}
 			DEBUG_LABEL.Text = "Clearing Second Away Penalty";
 			_log.Info(DEBUG_LABEL.Text);
-		}
-
-		private void AwayImageButton_Click(object sender, RoutedEventArgs e) {
-			OpenFileDialog dlg = new OpenFileDialog {
-				Filter = "Image Files(*PNG;*.BMP;*.JPG;*.GIF)|*PNG;*.BMP;*.JPG;*.GIF|All files (*.*)|*.*"
-			};
-
-			Nullable<bool> result = dlg.ShowDialog();
-
-			if (result == true) {
-				string filename = dlg.FileName;
-				BitmapImage bmp = filepathToImage(filename);
-				if (bmp != null) {
-					AwayImage.Source = bmp;
-					banner.AwayBackground.Source = bmp;
-					awayTeam.imagePath = filename;
-					DEBUG_LABEL.Text = "New Away Image: " + Path.GetFileName(filename);
-				}
-				else {
-					DEBUG_LABEL.Text = "Selected File Does not have compatible dimensions";
-				}
-
-			}
 		}
 
 		
