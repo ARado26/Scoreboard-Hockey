@@ -120,14 +120,11 @@
 
 
 		<Grid x:Name="GameInfoGrid" Grid.Column="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="121*"/>
-				<ColumnDefinition Width="36*"/>
-			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="30"/>
 				<RowDefinition Height="120"/>
 				<RowDefinition Height="120"/>
+				<RowDefinition Height="100"/>
 				<RowDefinition Height="120"/>
 				<RowDefinition Height="1*"/>
 			</Grid.RowDefinitions>
@@ -178,6 +175,30 @@
 
 
 			</Grid>
+
+			<!--<Grid Grid.Row="3">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+					<ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition/>
+					<RowDefinition/>
+					<RowDefinition Height="2*"/>
+				</Grid.RowDefinitions>
+				<Label Content="Banner Control" Grid.ColumnSpan="4" HorizontalAlignment="Left" VerticalAlignment="Top" />
+
+				<Label Grid.Row="2" Content="Height" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+				<TextBox Grid.Column="1" Grid.Row="2"  TextWrapping="NoWrap" Margin="10,5"/>
+				<Label Grid.Row="2" Grid.Column="2" Content="Width" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+				<TextBox Grid.Column="3" Grid.Row="2"  TextWrapping="NoWrap" Margin="10,5"/>
+				<CheckBox   Grid.Row="1" Grid.ColumnSpan="2" Content="Banner Movable"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="32,5,0,0"/>
+
+			</Grid>-->
+
+
 			<Grid Grid.Row="3" Grid.ColumnSpan="2">
 				<Grid.RowDefinitions>
 					<RowDefinition/>

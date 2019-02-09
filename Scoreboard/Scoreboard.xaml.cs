@@ -647,7 +647,7 @@ namespace Scoreboard {
 		}
 
 		private void AwayPenQueueButton_Click(object sender, RoutedEventArgs e) {
-			TimeSpan queuedPenalty = formatTimeSpan(HomePenMinutesQ.Text, HomePenSecondsQ.Text);
+			TimeSpan queuedPenalty = formatTimeSpan(AwayPenMinutesQ.Text, AwayPenSecondsQ.Text);
 			if (timer.Running) {
 				timer.enqueuePenalty("AWAY", queuedPenalty);
 			}
