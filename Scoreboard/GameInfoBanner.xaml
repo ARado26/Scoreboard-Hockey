@@ -10,13 +10,19 @@
 		WindowStartupLocation="Manual"
 		Left="0"
 		Top="0"
-		Height="160" 
+		Height="160"
 		Width="1200"
+		MinHeight="80"
+		MinWidth="600"
+		MaxHeight="546.1333"
+		MaxWidth="4096"
 		ResizeMode="NoResize"
 		WindowStyle="None"
 		Background="Magenta"
 		WindowState="Normal" 
 		AutomationProperties.IsOffscreenBehavior="Onscreen"
+		MouseDown="Window_MouseDown"
+		Cursor="SizeAll"
 		>
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -29,20 +35,20 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 
-		<Image x:Name="HomeBackground" />
+		<Image x:Name="HomeBackground" Stretch="Fill" />
 		<Grid x:Name="HomeGrid">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="100"/>
 				<ColumnDefinition />
 				<ColumnDefinition Width="90"/>
 			</Grid.ColumnDefinitions>
-			<TextBlock x:Name="HomeName" Grid.Column="1" TextWrapping="NoWrap" Text="HOME" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="White"/>
+			<TextBlock x:Name="HomeName" Grid.Column="1" TextWrapping="NoWrap" Text="HOME" TextAlignment="Center" VerticalAlignment="Center"  FontSize="50" FontFamily="Verdana" Foreground="White"/>
 			<TextBlock x:Name="HomeScore" Grid.Column="2" TextWrapping="NoWrap" Text="0" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="White"/>
 			
 		</Grid>
 
-		<Image x:Name="ClockBackground" Grid.Column="1"/>
-		<Grid Grid.Column="1">
+		<Image x:Name="ClockBackground" Grid.Column="1" Stretch="Fill" />
+		<Grid x:Name="GameInfoGrid" Grid.Column="1">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="1.5*"/>
 				<ColumnDefinition />
@@ -51,7 +57,7 @@
 			<TextBlock x:Name="Period" Grid.Column="1" TextWrapping="NoWrap" Text="PRD" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana"/>
 		</Grid>
 
-		<Image x:Name="AwayBackground" Grid.Column="2" />
+		<Image x:Name="AwayBackground" Grid.Column="2" Stretch="Fill" />
 		<Grid x:Name="AwayGrid" Grid.Column="2">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="100"/>
@@ -66,11 +72,12 @@
 			<Image x:Name="HomeAdvantageBackground" Stretch="Fill" Source=".\Images\Penalty_Cell.png" Visibility="Hidden"/>
 			<TextBlock x:Name="HomeAdvantage" TextWrapping="NoWrap" Text="PP 2:00" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
 		</Grid>
+
+		<Grid Grid.Column="1" Grid.Row="1" >
+			<Image x:Name="EvenStrengthBackground" Stretch="Fill" Source=".\Images\Penalty_Cell.png" Visibility="Hidden"/>
+			<TextBlock x:Name="EvenStrength" Grid.Column="1" Grid.Row="1" TextWrapping="NoWrap" Text="4 on 4 2:00" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
+		</Grid>
 		
-
-		<Image x:Name="EvenStrengthBackground" Grid.Column="1" Grid.Row="1" Source=".\Images\Penalty_Cell.png" Visibility="Hidden"/>
-		<TextBlock x:Name="EvenStrength" Grid.Column="1" Grid.Row="1" TextWrapping="NoWrap" Text="4 on 4 2:00" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>
-
 		<Grid x:Name="AwayAdvGrid" Grid.Column="2" Grid.Row="1">
 			<Image x:Name="AwayAdvantageBackground" Stretch="Fill" Source=".\Images\Penalty_Cell.png" Visibility="Hidden"/>
 			<TextBlock x:Name="AwayAdvantage"  TextWrapping="NoWrap" Text="Empty Net" TextAlignment="Center" VerticalAlignment="Center" FontSize="50" FontFamily="Verdana" Foreground="Black"/>

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace Scoreboard {
@@ -10,8 +11,17 @@ namespace Scoreboard {
 	/// </summary>
 	public partial class GameInfoBanner : Window {
 
+		
 		private int homeColumn;
 		private int awayColumn;
+		private bool movable;
+
+		private double lastScale;
+		private const int HEIGHT = 160;
+		private const int WIDTH = 1200;
+		private const int FONT_SIZE = 50;
+		private const double MAX_SCALE = 3.4133; //4k Resolution max
+		private const double MIN_SCALE = 0.5;
 
 		public GameInfoBanner() {
 			InitializeComponent();
@@ -22,6 +32,7 @@ namespace Scoreboard {
 			AwayAdvantageBackground.Source = bmp;
 			homeColumn = 0;
 			awayColumn = 2;
+			lastScale = 1;
 		}
 
 		public void setTime(string time) {
@@ -90,6 +101,68 @@ namespace Scoreboard {
 			awayColumn = tmp;
 		}
 
+		public void setMovable(bool flag) {
+			movable = flag;
+			if (movable) {
+				this.Cursor = Cursors.SizeAll;
+			}
+			else {
+				this.Cursor = Cursors.No;
+			}
+		}
+
+		public void setScale(double scale) {
+			if(scale > MAX_SCALE) {
+				scale = MAX_SCALE;
+			}else if(scale < MIN_SCALE) {
+				scale = MIN_SCALE;
+			}
+			this.Height = HEIGHT * scale;
+			this.Width = WIDTH * scale;
+			double newFontSize = FONT_SIZE * scale;
+			Clock.FontSize = newFontSize;
+			Period.FontSize = newFontSize;
+			EvenStrength.FontSize = newFontSize;
+			HomeName.FontSize = newFontSize;
+			HomeScore.FontSize = newFontSize;
+			HomeAdvantage.FontSize = newFontSize;
+			AwayName.FontSize = newFontSize;
+			AwayScore.FontSize = newFontSize;
+			AwayAdvantage.FontSize = newFontSize;
+			
+			foreach (ColumnDefinition definition in GameInfoGrid.ColumnDefinitions) {
+				if (definition.Width.IsAbsolute) {
+					double original = definition.Width.Value / lastScale;
+					double newWidth = original * scale;
+					Console.WriteLine(original);
+					Console.WriteLine(newWidth);
+					definition.Width = new GridLength(newWidth);
+				}
+			}
+
+			foreach (ColumnDefinition definition in HomeGrid.ColumnDefinitions) {
+				if (definition.Width.IsAbsolute) {
+					double original = definition.Width.Value / lastScale;
+					double newWidth = original * scale;
+					Console.WriteLine(original);
+					Console.WriteLine(newWidth);
+					definition.Width = new GridLength(newWidth);
+				}
+			}
+
+			foreach (ColumnDefinition definition in AwayGrid.ColumnDefinitions) {
+				if (definition.Width.IsAbsolute) {
+					double original = definition.Width.Value / lastScale;
+					double newWidth = original * scale;
+					Console.WriteLine(original);
+					Console.WriteLine(newWidth);
+					definition.Width = new GridLength(newWidth);
+				}
+			}
+
+			lastScale = scale;
+		}
+
 		private BitmapImage filepathToImage(string filepath) {
 			string fullpath = Path.GetFullPath(filepath);
 			Uri uriPath = new Uri(fullpath);
@@ -108,5 +181,11 @@ namespace Scoreboard {
 			return desiredAspect == imgAspect;
 		}
 
+
+		private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e) {
+			if (movable) {
+				this.DragMove();
+			}
+		}
 	}
 }

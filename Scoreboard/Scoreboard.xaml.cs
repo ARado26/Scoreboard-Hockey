@@ -42,9 +42,18 @@ namespace Scoreboard {
 		public MainWindow()
         {
 			XmlConfigurator.Configure();
-			initData();
-            InitializeComponent();
-			initFileData();
+			
+			try {
+				initData();
+				InitializeComponent();
+				initFileData();
+			}
+			catch(Exception e) {
+				_log.Error(e.Message);
+				_log.Error(e.StackTrace);
+				throw e;
+			}
+			
 		}
 
 		public void initData() {
@@ -80,20 +89,28 @@ namespace Scoreboard {
 		}
 
 		public void writeGameDataToFiles() {
-			List<string> paths = new List<string> {
+			try {
+				List<string> paths = new List<string> {
 				GAME_INFO,
 				HOME_TEAM,
 				AWAY_TEAM
 			};
-			foreach (string path in paths) {
-				if (!File.Exists(path)) {
-					FileStream f = File.Create(path);
-					f.Close();
+				foreach (string path in paths) {
+					if (!File.Exists(path)) {
+						FileStream f = File.Create(path);
+						f.Close();
+					}
 				}
+				File.WriteAllText(GAME_INFO, gameInfo.logInfo());
+				File.WriteAllText(HOME_TEAM, homeTeam.logInfo());
+				File.WriteAllText(AWAY_TEAM, awayTeam.logInfo());
 			}
-			File.WriteAllText(GAME_INFO, gameInfo.logInfo());
-			File.WriteAllText(HOME_TEAM, homeTeam.logInfo());
-			File.WriteAllText(AWAY_TEAM, awayTeam.logInfo());
+			catch (Exception e){
+				_log.Error(e.Message);
+				_log.Error(e.StackTrace);
+				throw e;
+			}
+			
 		}
 
 		public void initFileData() {
@@ -240,11 +257,33 @@ namespace Scoreboard {
 			_log.Debug(DEBUG_LABEL.Text);
 		}
 
-		private void GamePeriodSetter_Click(object sender, RoutedEventArgs e) {
+		private void GamePeriod_TextChanged(object sender, TextChangedEventArgs e) {
 			gameInfo.setPeriod(GamePeriod.Text);
 			banner.setPeriod(gameInfo.period);
 			DEBUG_LABEL.Text = "Period Set: " + GamePeriod.Text;
 			_log.Debug(DEBUG_LABEL.Text);
+		}
+
+		private void BannerControlCheckBox_Checked(object sender, RoutedEventArgs e) {
+			BannerControls.Visibility = Visibility.Visible;
+			banner.setMovable(true);
+			DEBUG_LABEL.Text = "Banner Controls Enabled";
+			_log.Info(DEBUG_LABEL.Text);
+		}
+
+		private void BannerControlCheckBox_Unchecked(object sender, RoutedEventArgs e) {
+			BannerControls.Visibility = Visibility.Hidden;
+			banner.setMovable(false);
+			DEBUG_LABEL.Text = "Banner Controls Disabled";
+			_log.Info(DEBUG_LABEL.Text);
+		}
+
+		private void ScaleTextBox_TextChanged(object sender, TextChangedEventArgs e) {
+			if(double.TryParse(ScaleTextBox.Text, out double scale)) {
+				if (scale > 0) {
+					banner.setScale(scale);
+				}
+			}
 		}
 
 		private void ResetAllButton_Click(object sender, RoutedEventArgs e) {
@@ -435,21 +474,28 @@ namespace Scoreboard {
 		}
 
 		private void toggleClock() {
-			if (clockState == CLOCK_STATES.STOPPED) {
-				timer.setTimerFields(gameInfo, homeTeam, awayTeam);
-				timer.startClock();
-				clockState = CLOCK_STATES.RUNNING;
-				toggleClockButtonText();
-				toggleClockTextBoxElements();
-				_log.Info("StartClock");
-			}
-			else {
-				timer.stopClock();
-				_log.Info("StopClock");
-			}
+			try {
+				if (clockState == CLOCK_STATES.STOPPED) {
+					timer.setTimerFields(gameInfo, homeTeam, awayTeam);
+					timer.startClock();
+					clockState = CLOCK_STATES.RUNNING;
+					toggleClockButtonText();
+					toggleClockTextBoxElements();
+					_log.Info("StartClock");
+				}
+				else {
+					timer.stopClock();
+					_log.Info("StopClock");
+				}
 
-			DEBUG_LABEL.Text = "Toggle Clock Mode: " + clockState;
-			_log.Debug(DEBUG_LABEL.Text);
+				DEBUG_LABEL.Text = "Toggle Clock Mode: " + clockState;
+				_log.Debug(DEBUG_LABEL.Text);
+			}
+			catch (Exception e) {
+				_log.Error(e.Message);
+				_log.Error(e.StackTrace);
+				throw e;
+			}
 		}
 
 		private void swapTeamGrids() {
@@ -727,6 +773,5 @@ namespace Scoreboard {
 			}
 		}
 
-		
 	}
 }
